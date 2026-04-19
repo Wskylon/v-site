@@ -1,101 +1,93 @@
 /* =========================================================================================================
-   [三相映射协议：阶段 I - 物理布局锚定]
-   [契约者：武少康 | 目标：绝对比例视口锁死]
-   
-   [构建逻辑：
-    1. 比例分割：10 分制横向切分 (25% | 50% | 25%)。
-    2. 空间锁死：强制 100vh，封杀一切滚动条，实现绝对一整页。
-    3. 镜像反转：左右两翼执行 transform: rotate(180deg) 物理倒置。
-    4. 资产对齐：zuo1.jpg (左) | zhong.jpg (中) | you2.jpg (右)。
-   ]
+   [三相映射协议：阶段 II - 绝对占满与视口锁死]
+   [契约者：武少康 | 目标：消除白边，禁止位移，一进页面即满屏]
    ========================================================================================================= */
 
 <template>
-  <div id="vzuor-trinity-root" class="trinity-container">
+  <div id="vzuor-absolute-frame">
     
-    <div class="trinity-wing wing-left">
-      <img :src="imgZuo" class="fill-asset inverted" alt="zuo1" />
+    <div class="col left-wing">
+      <img :src="imgZuo" class="absolute-fill inverted" />
     </div>
 
-    <div class="trinity-main">
-      <img :src="imgZhong" class="fill-asset" alt="zhong" />
+    <div class="col center-main">
+      <img :src="imgZhong" class="absolute-fill" />
     </div>
 
-    <div class="trinity-wing wing-right">
-      <img :src="imgYou" class="fill-asset inverted" alt="you2" />
+    <div class="col right-wing">
+      <img :src="imgYou" class="absolute-fill inverted" />
     </div>
 
   </div>
 </template>
 
 <script setup>
-/**
- * [第一步：基础素材与路径映射]
- * 确保图片存放在 /src/assets/ 目录下
- */
 import imgZhong from './assets/zhong.jpg'
 import imgZuo from './assets/zuo1.jpg'
 import imgYou from './assets/you2.jpg'
-
-// 后续逻辑将在此逐步追加...
 </script>
 
-<style scoped>
-/**
- * [第一步：视口物理锁死 CSS]
- */
-:root {
-  --w-wing: 25%; /* 2.5/10 */
-  --w-main: 50%; /* 5/10 */
+<style>
+/* 关键：清除浏览器所有默认边距，防止产生白边或滚动条 */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* 物理切断滚动条 */
+  background: #000;
 }
 
-/* 强制全屏，彻底禁止滑动 */
-* { box-sizing: border-box; }
+#app {
+  width: 100%;
+  height: 100%;
+}
 
-.trinity-container {
+#vzuor-absolute-frame {
   display: flex;
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* 核心：物理消除滚动条 */
-  background: #000; /* 默认底色，防止图片加载前的闪白 */
+  align-items: stretch;
 }
 
-/* 翼板通配样式 */
-.trinity-wing {
-  width: 25%;
+/* 核心比例分配：2.5 : 5 : 2.5 */
+.left-wing {
+  flex: 2.5;
+  background: #111; /* 底色防止加载闪烁 */
+}
+
+.center-main {
+  flex: 5;
+  background: #000;
+}
+
+.right-wing {
+  flex: 2.5;
+  background: #111;
+}
+
+.col {
   height: 100%;
-  overflow: hidden;
   position: relative;
+  overflow: hidden; /* 确保内容不会溢出格子 */
 }
 
-/* 中枢通配样式 */
-.trinity-main {
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* 图片填充逻辑 */
-.fill-asset {
+/* 强制占满算法：不再允许图片比容器小 */
+.absolute-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 保证图片在不缩放变形的前提下铺满它所在的格子 */
+  object-fit: cover; /* 自动裁切比例，保证物理上 100% 占满不留白 */
   display: block;
+  pointer-events: none; /* 禁止鼠标对图片的任何拖拽干扰 */
 }
 
-/* [关键指令]：物理倒置左右两张图片 */
+/* 物理倒置 */
 .inverted {
   transform: rotate(180deg);
-}
-
-/* 针对不同分辨率的微调，确保永远是一整页 */
-@media (max-aspect-ratio: 1/1) {
-  .fill-asset {
-    object-fit: contain; /* 在手机等窄屏下如果不想切图可改此项，但会留黑边 */
-    object-fit: cover;    /* 维持 cover 是为了保证“铺满”的视觉一致性 */
-  }
 }
 </style>
