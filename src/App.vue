@@ -1,37 +1,36 @@
-<template>
-  <div id="vzuor-absolute-frame">
-    <img :src="imgZuo" class="wing left-wing inverted" />
-    
-    <img :src="imgYou" class="wing right-wing inverted" />
-
-    <img :src="imgZhong" class="center-main" />
-  </div>
-</template>
-
-<script setup>
-import imgZhong from './assets/zhong.jpg'
-import imgZuo from './assets/zuo1.jpg'
-import imgYou from './assets/you2.jpg'
-</script>
-
 <style>
+/* 终极重置：无视 Vite 任何默认排版 */
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* 绝对切断任何滚动条 */
   background: #000;
+}
+
+/* 强制重置 Vue 的挂载点 */
+#app {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  width: 100vw;
+  height: 100vh;
+  text-align: left;
 }
 
 #vzuor-absolute-frame {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: #000;
 }
 
-/* 侧边两翼占 30% 宽度（比原来的 25% 宽，能保留更多内容），置于底层 */
+/* 侧边两翼占 30% 宽度，置于底层 */
 .wing {
   position: absolute;
   top: 0;
@@ -48,14 +47,14 @@ html, body {
 .center-main {
   position: absolute;
   top: 0;
-  left: 25vw; /* 刚好压住左侧 5vw，压住右侧 5vw */
+  left: 25vw;
   width: 50vw;
   height: 100%;
   object-fit: cover;
   z-index: 2;
   pointer-events: none;
   
-  /* 核心融合魔法：只让中间图的左右边缘向内羽化透明，露出底下的图 */
+  /* 核心融合魔法：边缘羽化 */
   -webkit-mask-image: linear-gradient(to right, 
     transparent 0%, 
     black 10%, 
@@ -68,7 +67,6 @@ html, body {
     transparent 100%);
 }
 
-/* 物理倒置 */
 .inverted {
   transform: rotate(180deg);
 }
