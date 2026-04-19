@@ -1,646 +1,619 @@
 <template>
-  <div id="nexus-terminal" :class="[realmState, { 'death-return-active': isDeathReturning }]">
+  <div id="vzuor-nexus" class="nexus-root" :class="realmState">
     
-    <svg style="display: none;">
-      <defs>
-        <filter id="flesh-warp" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="3" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-        <filter id="sanity-glitch">
-          <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green"/>
-          <feOffset in="red" dx="3" dy="0" result="red_offset"/>
-          <feOffset in="green" dx="-3" dy="0" result="green_offset"/>
-          <feBlend mode="screen" in="red_offset" in2="green_offset"/>
-          <feBlend mode="screen" in="SourceGraphic" in2="red_offset"/>
-        </filter>
-      </defs>
-    </svg>
+    <div class="layer-0-parchment" :style="{ backgroundImage: `url(${require('./assets/羊皮纸.jpg')})` }"></div>
+    <div class="micro-noise-overlay"></div>
 
-    <div class="static-noise"></div>
-    <div class="crt-scanlines"></div>
+    <div class="layer-1-corruption">
+      <img src="./assets/墨迹1.jpg" class="ink-asset ink-top-left" />
+      <img src="./assets/墨迹2.jpg" class="ink-asset ink-bottom-right" />
+      <img src="./assets/触手1.jpg" class="ink-asset sketch-bg-left" />
+      <img src="./assets/墨迹3.jpg" class="ink-asset hand-of-void" />
+    </div>
 
-    <div class="grimoire-grid">
+    <canvas ref="engineCanvas" class="layer-2-canvas"></canvas>
 
-      <header class="grid-header">
-        <div class="title-construct">
-          <h1 class="eldritch-title" :data-text="terminalName">{{ terminalName }}</h1>
-          <div class="sub-designation">
-            <span class="blinking-eye">◉</span>
-            <span class="designation-text">PROJECT_22408_USTC_ASCENSION // ALIVE</span>
+    <div class="layer-3-altar">
+      <div class="altar-container" :class="{'heartbeat': isHyper}">
+        <img src="./assets/耶稣受难克苏鲁版，作为祭坛.jpg" class="crucifixion-totem" />
+        
+        <div class="siphon-core">
+          <div class="core-ring">
+             <span class="vocab-digit">{{ vocabSiphoned }}</span>
+             <span class="vocab-max">/ 4000</span>
+          </div>
+          <div class="core-label">GRIMOIRE_ASSIMILATION</div>
+        </div>
+
+        <img src="./assets/墨迹4.jpg" class="ink-asset blood-splash-left" :class="{'active': isHyper}" />
+        <img src="./assets/墨迹5.jpg" class="ink-asset blood-splash-right" :class="{'active': isHyper}" />
+      </div>
+    </div>
+
+    <div class="layer-4-order-grid">
+      
+      <header class="grid-cell header-zone">
+        <div class="brand-block">
+          <h1 class="artifact-title">V'ZUOR KHAA-SH'AN</h1>
+          <div class="artifact-sub">
+            <span class="pulse-node"></span>
+            OBSERVER_HUB // 22408_ASCENSION_PROTOCOL
           </div>
         </div>
-        <div class="chronos-construct">
-          <div class="doom-timer">{{ doomTimer }}</div>
-          <div class="timer-label">UNTIL_THE_STARS_ARE_RIGHT (2028-12)</div>
+        <div class="time-block">
+          <div class="doom-clock">{{ doomTime }}</div>
+          <div class="doom-label">DESTINY_RECKONING (2028)</div>
         </div>
       </header>
 
-      <aside class="grid-left-pillar">
-        <h2 class="section-title">THE_PILLARS</h2>
-        <div class="pillar-list">
-          <div class="pillar-node" :class="{'active': activePillar === 'C_LANG'}">
-            <span class="node-icon">Ⅰ</span>
-            <div class="node-data">
-              <div class="node-name">FLESH (C_LANGUAGE)</div>
-              <div class="node-status">ASSIMILATION_ONGOING</div>
-            </div>
+      <aside class="grid-cell left-zone">
+        <h2 class="zone-title">BIOMETRIC_TELEMETRY</h2>
+        <div class="telemetry-matrix">
+          <div class="t-row">
+            <span class="t-key">SANITY_INDEX:</span>
+            <span class="t-val text-alert">{{ sanityIndex.toFixed(4) }}%</span>
           </div>
-          <div class="pillar-node" :class="{'active': activePillar === 'DATA_STRUCT'}">
-            <span class="node-icon">Ⅱ</span>
-            <div class="node-data">
-              <div class="node-name">BONE (DATA_STRUCTURES)</div>
-              <div class="node-status">RECONSTRUCTING</div>
-            </div>
+          <div class="t-row">
+            <span class="t-key">KARMA_WEIGHT:</span>
+            <span class="t-val">{{ karmaWeight.toFixed(2) }}</span>
           </div>
-          <div class="pillar-node" :class="{'active': activePillar === 'MATH'}">
-            <span class="node-icon">Ⅲ</span>
-            <div class="node-data">
-              <div class="node-name">VOID (ADVANCED_MATH)</div>
-              <div class="node-status">COMPREHENDING</div>
-            </div>
+          <div class="t-row">
+            <span class="t-key">FLESH_FORGE:</span>
+            <span class="t-val">3-ON / 2-OFF</span>
+          </div>
+          <div class="t-row">
+            <span class="t-key">CAFFEINE_DOSE:</span>
+            <span class="t-val" :class="{'text-hyper': isHyper}">{{ caffeineLvl }} MG</span>
           </div>
         </div>
+        
+        <div class="asset-showcase">
+           <img src="./assets/触手2.jpg" class="ink-asset mini-sketch" />
+           <p class="sketch-caption">FIG 1. THE_ABYSSAL_ROOTS</p>
+        </div>
+      </aside>
 
-        <div class="flesh-forge-stats mt-auto">
-          <h2 class="section-title">FLESH_FORGE (GYM)</h2>
-          <div class="forge-bar-container">
-            <div class="forge-label">CYCLE: 3-ON / 2-OFF</div>
-            <div class="forge-bar"><div class="forge-progress" style="width: 60%"></div></div>
-          </div>
-          <div class="forge-bar-container mt-2">
-            <div class="forge-label">CAFFEINE_CATALYST</div>
-            <div class="forge-value text-crimson">{{ caffeineDose }} MG</div>
+      <aside class="grid-cell right-zone">
+        <h2 class="zone-title">AKASHIC_RECORDS</h2>
+        <div class="record-scroll" ref="scrollBox">
+          <div v-for="(log, i) in terminalLogs" :key="i" class="log-line" :class="log.level">
+            <span class="log-ts">[{{ log.ts }}]</span>
+            <span class="log-msg">{{ log.msg }}</span>
           </div>
         </div>
       </aside>
 
-      <main class="grid-center-rift">
-        <div class="rift-containment">
-          <canvas ref="riftCanvas" class="rift-canvas"></canvas>
-          <div class="rift-overlay"></div>
-          
-          <div class="sanity-centerpiece">
-            <div class="vocab-readout">
-              <span class="vocab-number">{{ vocabProgress }}</span>
-              <span class="vocab-total">/ 4000</span>
-            </div>
-            <div class="vocab-label">GRIMOIRE_TRANSLATION_PROGRESS</div>
-          </div>
+      <footer class="grid-cell footer-zone">
+        <div class="terminal-input-wrap">
+          <span class="cli-arrow">>></span>
+          <input 
+            ref="cmdInput"
+            v-model="rawCommand"
+            @keyup.enter="processRitual"
+            class="cli-input"
+            placeholder="AWAITING SACRIFICE... (e.g., 'vocab 50', 'dose 400', 'vzuor')"
+            spellcheck="false"
+            autocomplete="off"
+          />
         </div>
-      </main>
-
-      <aside class="grid-right-log">
-        <h2 class="section-title">SANITY_METRICS</h2>
-        <div class="metric-block">
-          <div class="metric-row">
-            <span>KARMA_LOAD (业障):</span>
-            <span class="text-glitch">{{ karmaLoad.toFixed(2) }}</span>
-          </div>
-          <div class="metric-row">
-            <span>DEATH_RETURNS (死亡回归):</span>
-            <span class="text-crimson">[{{ deathReturns }}]</span>
-          </div>
-          <div class="metric-row">
-            <span>SENIOR_SISTER_GAZE:</span>
-            <span :class="{'text-crimson blink': isGazed}">{{ isGazed ? 'DETECTED' : 'ABSENT' }}</span>
-          </div>
-        </div>
-
-        <h2 class="section-title mt-4">AKASHIC_RECORDS</h2>
-        <div class="terminal-history" ref="historyBox">
-          <div v-for="(log, idx) in cmdHistory" :key="idx" class="log-entry" :class="log.type">
-            <span class="log-time">[{{ log.time }}]</span>
-            <span class="log-msg" v-html="log.msg"></span>
-          </div>
-        </div>
-      </aside>
-
-      <footer class="grid-footer">
-        <div class="cli-prefix">root@vzuor:~#</div>
-        <input 
-          ref="cmdInput"
-          v-model="currentCmd"
-          @keyup.enter="executeCommand"
-          class="cli-input"
-          placeholder="AWAITING SACRIFICE... (type 'help' for rituals)"
-          spellcheck="false"
-          autocomplete="off"
-        />
       </footer>
 
     </div>
+    
+    <div class="sanity-break-overlay" v-if="isSanityBroken">
+       <h1 class="glitch-huge">H I D E Y O U R S E L F</h1>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
-// ==========================================
-// [系统核心架构] : 状态与持久化
-// ==========================================
-const terminalName = "V'ZUOR KHAA-SH'AN"
-const realmState = ref('realm-stable') // stable, hyper, corrupted
-const isDeathReturning = ref(false)
+// ============================================================================
+// [系统底层：持久化与核心状态]
+// ============================================================================
+const loadMem = (k, def) => Number(localStorage.getItem(k)) || def
+const saveMem = (k, v) => localStorage.setItem(k, v)
 
-// 响应式数据 (与本地 LocalStorage 绑定，确保重启不丢失)
-const loadState = (key, defaultVal) => Number(localStorage.getItem(key)) || defaultVal
-const saveState = (key, val) => localStorage.setItem(key, val)
+// 响应式核心数据
+const vocabSiphoned = ref(loadMem('vzuor_vocab_v4', 2150))
+const karmaWeight = ref(loadMem('vzuor_karma_v4', 23.7))
+const caffeineLvl = ref(200)
+const sanityIndex = ref(99.9999)
 
-const vocabProgress = ref(loadState('vzuor_vocab', 2000))
-const karmaLoad = ref(loadState('vzuor_karma', 13.4))
-const deathReturns = ref(loadState('vzuor_deaths', 0))
-const caffeineDose = ref(200)
+// 视图状态
+const realmState = ref('state-stable')
+const isHyper = ref(false)
+const isSanityBroken = ref(false)
+const rawCommand = ref('')
+const terminalLogs = reactive([])
+const scrollBox = ref(null)
+const doomTime = ref('000D | 00:00:00')
 
-const activePillar = ref('C_LANG')
-const isGazed = ref(false)
-
-const doomTimer = ref('000D | 00:00:00')
-
-// 终端日志历史
-const cmdHistory = reactive([
-  { time: getSysTime(), type: 'sys', msg: '初始化阿卡姆底层协议... 成功。' },
-  { time: getSysTime(), type: 'sys', msg: '22408 飞升矩阵已上线。' }
-])
-const currentCmd = ref('')
-const historyBox = ref(null)
-
-// ==========================================
-// [时间引擎] : 倒计时与时钟
-// ==========================================
-function getSysTime() {
-  const now = new Date()
-  return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`
+// ============================================================================
+// [时间引擎：倒计时与时钟同步]
+// ============================================================================
+const getTs = () => {
+  const d = new Date()
+  return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}.${d.getMilliseconds().toString().padStart(3,'0')}`
 }
 
-let timerInterval
-const initTimeEngine = () => {
+let timeLoop
+const bootTimeEngine = () => {
   const targetDate = new Date('2028-12-23T08:30:00').getTime()
-  timerInterval = setInterval(() => {
-    const now = new Date().getTime()
-    const diff = targetDate - now
-    if (diff <= 0) {
-      doomTimer.value = "JUDGEMENT_DAY"
-      return
-    }
+  timeLoop = setInterval(() => {
+    const diff = targetDate - new Date().getTime()
+    if (diff <= 0) { doomTime.value = "THE_END_IS_HERE"; return }
     const d = Math.floor(diff / 86400000).toString().padStart(3, '0')
     const h = Math.floor((diff / 3600000) % 24).toString().padStart(2, '0')
     const m = Math.floor((diff / 60000) % 60).toString().padStart(2, '0')
     const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0')
-    doomTimer.value = `${d}D | ${h}:${m}:${s}`
+    doomTime.value = `${d}D | ${h}:${m}:${s}`
+    
+    // 理智值随时间缓慢流失
+    sanityIndex.value = Math.max(0, sanityIndex.value - 0.0001)
   }, 1000)
 }
 
-// ==========================================
-// [指令解析中枢] : 复杂指令处理系统
-// ==========================================
-const pushLog = (msg, type = 'info') => {
-  cmdHistory.push({ time: getSysTime(), type, msg })
-  if (cmdHistory.length > 50) cmdHistory.shift()
-  nextTick(() => {
-    if (historyBox.value) historyBox.value.scrollTop = historyBox.value.scrollHeight
-  })
+// ============================================================================
+// [命令行中枢：仪式解析器]
+// ============================================================================
+const appendLog = (msg, level = 'info') => {
+  terminalLogs.push({ ts: getTs(), msg, level })
+  if (terminalLogs.length > 60) terminalLogs.shift()
+  nextTick(() => { if (scrollBox.value) scrollBox.value.scrollTop = scrollBox.value.scrollHeight })
 }
 
-const executeCommand = () => {
-  const rawCmd = currentCmd.value.trim()
-  if (!rawCmd) return
+const processRitual = () => {
+  const cmdStr = rawCommand.value.trim().toLowerCase()
+  if (!cmdStr) return
   
-  pushLog(`> ${rawCmd}`, 'echo')
-  const args = rawCmd.toLowerCase().split(' ')
-  const command = args[0]
+  appendLog(`> ${cmdStr}`, 'echo')
+  const args = cmdStr.split(' ')
+  const rootCmd = args[0]
 
-  switch (command) {
-    case 'help':
-      pushLog('可用仪式 [ rituals ]:', 'sys')
-      pushLog('  vocab [num]   - 献祭词汇 (例: vocab 50)', 'sys')
-      pushLog('  dose [num]    - 注入咖啡因 (例: dose 400)', 'sys')
-      pushLog('  pillar [name] - 切换研究柱神 (c/data/math)', 'sys')
-      pushLog('  vzuor         - [禁忌] 呼唤真名', 'sys')
-      pushLog('  die           - 执行死亡回归协议', 'sys')
-      break
-
+  switch (rootCmd) {
     case 'vocab':
-      const amount = parseInt(args[1]) || 1
-      vocabProgress.value = Math.min(4000, vocabProgress.value + amount)
-      saveState('vzuor_vocab', vocabProgress.value)
-      karmaLoad.value = Math.max(0, karmaLoad.value - (amount * 0.05))
-      saveState('vzuor_karma', karmaLoad.value)
-      pushLog(`魔典翻译进度更新。当前词汇量: <span class="text-bone">${vocabProgress.value}/4000</span>`, 'success')
+      const amt = parseInt(args[1])
+      if (isNaN(amt)) {
+        appendLog('献祭失败：未定义数量。', 'error')
+      } else {
+        vocabSiphoned.value = Math.min(4000, vocabSiphoned.value + amt)
+        saveMem('vzuor_vocab_v4', vocabSiphoned.value)
+        karmaWeight.value = Math.max(0, karmaWeight.value - (amt * 0.05))
+        saveMem('vzuor_karma_v4', karmaWeight.value)
+        sanityIndex.value = Math.min(100, sanityIndex.value + 0.5)
+        appendLog(`知识已同化。祭坛水位上升。当前: ${vocabSiphoned.value}/4000`, 'success')
+      }
       break
 
     case 'dose':
       const dose = parseInt(args[1])
-      if (isNaN(dose)) {
-        pushLog('无效的剂量。', 'error')
-      } else {
-        caffeineDose.value = dose
-        if (dose >= 400) {
-          triggerHyperDrive()
-        } else {
-          pushLog(`咖啡因水平已稳定在 ${dose}mg。`, 'info')
-        }
+      if (!isNaN(dose)) {
+        caffeineLvl.value = dose
+        if (dose >= 400) triggerHyperMode()
+        else appendLog(`神经递质催化剂已调整为 ${dose}MG。`, 'info')
       }
       break
 
-    case 'pillar':
-      const p = args[1]
-      if (p === 'c') activePillar.value = 'C_LANG'
-      else if (p === 'data') activePillar.value = 'DATA_STRUCT'
-      else if (p === 'math') activePillar.value = 'MATH'
-      else pushLog('未知的柱神。', 'error')
-      if (['c','data','math'].includes(p)) pushLog(`认知焦点已转移至 [${activePillar.value}]。`, 'success')
-      break
-
     case 'vzuor':
-      triggerSanityLoss()
+      triggerSanityBreak()
       break
 
-    case 'die':
-      triggerDeathReturn()
+    case 'help':
+      appendLog('仪式协议 (PROTOCOLS):', 'info')
+      appendLog(' - vocab [num] : 献祭考研词汇进度', 'info')
+      appendLog(' - dose [num]  : 注入咖啡因 (MG)', 'info')
+      appendLog(' - vzuor       : [WARNING] 呼唤真名', 'alert')
       break
 
     default:
-      karmaLoad.value += 0.2
-      saveState('vzuor_karma', karmaLoad.value)
-      pushLog(`未知指令。深渊注视着你，业障增加。`, 'error')
+      karmaWeight.value += 0.5
+      saveMem('vzuor_karma_v4', karmaWeight.value)
+      appendLog(`未知频率 [${cmdStr}]。业障增加。古神在注视你。`, 'error')
   }
-  
-  currentCmd.value = ''
+  rawCommand.value = ''
 }
 
-// --- 极端状态触发器 ---
-const triggerHyperDrive = () => {
-  realmState.value = 'realm-hyper'
-  pushLog('警告：咖啡因摄入过载！神经元燃烧中...', 'error')
+// ============================================================================
+// [极端状态触发器]
+// ============================================================================
+const triggerHyperMode = () => {
+  isHyper.value = true
+  realmState.value = 'state-hyper'
+  appendLog('CRITICAL: 心率异常，突触燃烧。血液开始沸腾。', 'alert')
+  // 通知 Canvas 引擎加速
+  if(window.sysEngine) window.sysEngine.setHyper(true)
+  
   setTimeout(() => {
-    realmState.value = 'realm-stable'
-    caffeineDose.value = 200
-    pushLog('系统冷却，药效消退，恢复常规 3-ON-2-OFF 循环。', 'sys')
+    isHyper.value = false
+    realmState.value = 'state-stable'
+    caffeineLvl.value = 200
+    if(window.sysEngine) window.sysEngine.setHyper(false)
+    appendLog('药效消退。机体恢复 3-ON-2-OFF 循环。', 'info')
   }, 8000)
 }
 
-const triggerSanityLoss = () => {
-  realmState.value = 'realm-corrupted'
-  isGazed.value = true
-  pushLog('<span class="text-glitch">“学姐在看着你。”</span>', 'error')
+const triggerSanityBreak = () => {
+  isSanityBroken.value = true
+  appendLog('FATAL ERROR: 实体突破防线。', 'alert')
   setTimeout(() => {
-    realmState.value = 'realm-stable'
-    isGazed.value = false
-    pushLog('幻觉消散。请保持理智。', 'sys')
-  }, 5000)
+    isSanityBroken.value = false
+    sanityIndex.value -= 15.0
+    appendLog('世界线重置完成。理智大幅受损。', 'error')
+  }, 4000)
 }
 
-const triggerDeathReturn = () => {
-  isDeathReturning.value = true
-  deathReturns.value += 1
-  saveState('vzuor_deaths', deathReturns.value)
-  pushLog('<span class="text-crimson">检测到致命逻辑错误。正在执行死亡回归...</span>', 'error')
-  setTimeout(() => {
-    isDeathReturning.value = false
-    pushLog(`世界线重置。这是你的第 ${deathReturns.value} 次尝试。`, 'sys')
-  }, 3000)
+// ============================================================================
+// [终极渲染：基于反向运动学(IK)与流体粒子的 Canvas 引擎]
+// 代码深度突破：手写物理模拟，直接操控屏幕像素
+// ============================================================================
+const engineCanvas = ref(null)
+
+class IKTentacle {
+  constructor(x, y, segments, length, color) {
+    this.baseX = x; this.baseY = y
+    this.segments = segments; this.segLength = length
+    this.angles = new Array(segments).fill(0)
+    this.target = { x: x, y: y }
+    this.color = color
+    this.noiseOffset = Math.random() * 1000
+  }
+  
+  reach(targetX, targetY) {
+    // 逆运动学简易实现 (FABRIK 变体)
+    let curX = targetX, curY = targetY
+    const pts = [{x: this.baseX, y: this.baseY}]
+    for(let i=0; i<this.segments; i++) pts.push({x:0, y:0}) // init
+    
+    // 简易追踪算法 (向目标弯曲)
+    for (let i = 0; i < this.segments; i++) {
+      let dx = targetX - this.baseX
+      let dy = targetY - this.baseY
+      let angle = Math.atan2(dy, dx) + Math.sin(Date.now()*0.001 + i*0.2 + this.noiseOffset) * 0.3
+      this.angles[i] += (angle - this.angles[i]) * 0.1
+    }
+  }
+
+  draw(ctx, time, isHyper) {
+    ctx.beginPath()
+    ctx.moveTo(this.baseX, this.baseY)
+    let cx = this.baseX, cy = this.baseY
+    
+    // 触手根部粗，尖端细
+    for (let i = 0; i < this.segments; i++) {
+      // 增加蠕动感
+      const wobble = Math.sin(time * (isHyper?5:2) + i * 0.5 + this.noiseOffset) * (isHyper?15:5)
+      cx += Math.cos(this.angles[i]) * this.segLength + wobble * 0.1
+      cy += Math.sin(this.angles[i]) * this.segLength + wobble * 0.1
+      
+      ctx.lineTo(cx, cy)
+    }
+    
+    ctx.strokeStyle = this.color
+    ctx.lineWidth = isHyper ? 3 : 1.5
+    ctx.lineCap = 'round'
+    ctx.stroke()
+  }
 }
 
-
-// ==========================================
-// [非欧几里得渲染引擎] : 高级 Canvas 粒子与触手
-// ==========================================
-const riftCanvas = ref(null)
-let ctx, animationId
-let particles = []
-let time = 0
-
-class AbyssalParticle {
+class BloodParticle {
   constructor(w, h) {
     this.w = w; this.h = h
     this.reset()
   }
   reset() {
-    this.x = this.w / 2 + (Math.random() - 0.5) * 50
-    this.y = this.h / 2 + (Math.random() - 0.5) * 50
-    this.angle = Math.random() * Math.PI * 2
-    this.speed = Math.random() * 0.5 + 0.1
-    this.radius = Math.random() * 2 + 1
+    this.x = this.w / 2 + (Math.random() - 0.5) * 400
+    this.y = this.h / 2 + (Math.random() - 0.5) * 400
+    this.vx = (Math.random() - 0.5) * 2
+    this.vy = Math.random() * -2 - 1 // 向上漂浮，像灰烬
     this.life = Math.random() * 100 + 50
     this.maxLife = this.life
-    this.color = realmState.value === 'realm-hyper' ? `rgba(139,0,0,` : `rgba(0, 255, 102,` // 红 or 虚空绿
+    this.size = Math.random() * 2.5 + 0.5
   }
-  update(progressRatio) {
-    // 粒子受到中央黑洞（理智值）的吸引或排斥
-    const centerX = this.w / 2
-    const centerY = this.h / 2
-    const dx = centerX - this.x
-    const dy = centerY - this.y
-    const dist = Math.sqrt(dx*dx + dy*dy)
+  update(isHyper) {
+    this.x += this.vx * (isHyper ? 4 : 1)
+    this.y += this.vy * (isHyper ? 4 : 1)
     
-    // 复杂的极坐标运动
-    this.angle += 0.02
-    this.x += Math.cos(this.angle) * this.speed + (dx / dist) * (progressRatio * 2)
-    this.y += Math.sin(this.angle) * this.speed + (dy / dist) * (progressRatio * 2)
-    
+    // 引力：如果靠近中心，会被祭坛吸进去
+    const dx = (this.w/2) - this.x
+    const dy = (this.h/2) - this.y
+    if(Math.sqrt(dx*dx+dy*dy) < 150) {
+        this.vx += dx * 0.005
+        this.vy += dy * 0.005
+    }
+
     this.life--
-    if (this.life <= 0 || dist > this.w) this.reset()
+    if (this.life <= 0 || this.y < 0 || this.x < 0 || this.x > this.w) this.reset()
   }
-  draw(ctx) {
-    const opacity = (this.life / this.maxLife) * 0.6
-    ctx.fillStyle = `${this.color}${opacity})`
+  draw(ctx, isHyper) {
+    const op = (this.life / this.maxLife) * 0.8
+    ctx.fillStyle = isHyper ? `rgba(180, 0, 0, ${op})` : `rgba(20, 20, 20, ${op})`
     ctx.beginPath()
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
     ctx.fill()
   }
 }
 
-const initRiftEngine = () => {
-  if (!riftCanvas.value) return
-  ctx = riftCanvas.value.getContext('2d')
+const bootRenderEngine = () => {
+  const cvs = engineCanvas.value
+  if(!cvs) return
+  const ctx = cvs.getContext('2d')
   
-  // 匹配 CSS 中的容器尺寸
-  const width = riftCanvas.value.clientWidth || 400
-  const height = riftCanvas.value.clientHeight || 400
-  riftCanvas.value.width = width
-  riftCanvas.value.height = height
+  let w = window.innerWidth
+  let h = window.innerHeight
+  cvs.width = w; cvs.height = h
 
-  // 初始化粒子群
-  for (let i = 0; i < 150; i++) {
-    particles.push(new AbyssalParticle(width, height))
+  // 生成围绕祭坛的动态触手
+  const tentacles = []
+  for(let i=0; i<8; i++) {
+    tentacles.push(new IKTentacle(w/2, h/2, 15, 20, 'rgba(10, 10, 10, 0.4)'))
   }
 
-  const renderLoop = () => {
-    // 制造拖影效果
-    ctx.fillStyle = 'rgba(5, 5, 5, 0.15)'
-    ctx.fillRect(0, 0, width, height)
+  // 生成环境灰烬/血滴
+  const particles = []
+  for(let i=0; i<150; i++) particles.push(new BloodParticle(w, h))
 
-    const progressRatio = vocabProgress.value / 4000
-    
-    // 绘制深渊底部的蠕动触手/波浪
-    ctx.beginPath()
-    const waveHeight = height * (1 - progressRatio * 0.8) // 随词汇量上升，深渊被填满
-    ctx.moveTo(0, waveHeight)
-    for (let x = 0; x <= width; x++) {
-      const isH = realmState.value === 'realm-hyper'
-      const freq = isH ? 0.05 : 0.02
-      const amp = isH ? 30 : 15
-      const y = waveHeight + Math.sin(x * freq + time) * amp + Math.cos(x * 0.01 + time * 1.5) * (amp/2)
-      ctx.lineTo(x, y)
-    }
-    ctx.lineTo(width, height)
-    ctx.lineTo(0, height)
-    
-    const grad = ctx.createLinearGradient(0, waveHeight, 0, height)
-    grad.addColorStop(0, realmState.value === 'realm-hyper' ? '#4a0000' : '#0a1a15')
-    grad.addColorStop(1, '#000000')
-    ctx.fillStyle = grad
-    ctx.fill()
+  let mx = w/2, my = h/2
+  window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY })
+  window.addEventListener('resize', () => { 
+    w = window.innerWidth; h = window.innerHeight; 
+    cvs.width = w; cvs.height = h 
+    tentacles.forEach(t => { t.baseX = w/2; t.baseY = h/2 })
+  })
 
-    // 更新和绘制粒子
-    particles.forEach(p => {
-      // 狂化模式下动态改变颜色
-      p.color = realmState.value === 'realm-hyper' ? `rgba(200,20,20,` : `rgba(20, 200, 100,`
-      p.update(progressRatio)
-      p.draw(ctx)
+  let time = 0
+  let isEngineHyper = false
+  
+  // 暴露给 Vue 组件控制
+  window.sysEngine = { setHyper: (val) => isEngineHyper = val }
+
+  const loop = () => {
+    ctx.clearRect(0, 0, w, h)
+
+    // 更新绘制触手
+    tentacles.forEach((t, index) => {
+      // 让部分触手具有独立意志，部分追踪鼠标
+      const targetX = index % 2 === 0 ? mx : w/2 + Math.cos(time + index)*300
+      const targetY = index % 2 === 0 ? my : h/2 + Math.sin(time*0.8 + index)*300
+      t.reach(targetX, targetY)
+      t.color = isEngineHyper ? 'rgba(139,0,0,0.6)' : 'rgba(10,10,10,0.3)'
+      t.draw(ctx, time, isEngineHyper)
     })
 
-    // 绘制中心“瞳孔/核心”
-    const coreRadius = 30 + Math.sin(time * 2) * 5
-    ctx.beginPath()
-    ctx.arc(width/2, height/2, coreRadius, 0, Math.PI * 2)
-    ctx.strokeStyle = realmState.value === 'realm-hyper' ? 'rgba(255,0,0,0.5)' : 'rgba(0,255,102,0.3)'
-    ctx.lineWidth = 2
-    ctx.stroke()
+    // 更新绘制粒子
+    particles.forEach(p => {
+      p.update(isEngineHyper)
+      p.draw(ctx, isEngineHyper)
+    })
 
-    time += realmState.value === 'realm-hyper' ? 0.1 : 0.03
-    animationId = requestAnimationFrame(renderLoop)
+    time += isEngineHyper ? 0.05 : 0.01
+    requestAnimationFrame(loop)
   }
-  renderLoop()
+  loop()
 }
 
-// --- 生命周期 ---
+// ============================================================================
+// [生命周期钩子]
+// ============================================================================
 onMounted(() => {
-  initTimeEngine()
-  // 延迟初始化 Canvas 确保 DOM 就绪
-  setTimeout(initRiftEngine, 100)
-  pushLog('终端所有核心系统已就绪。', 'success')
+  appendLog('BOOT SEQUENCE INITIATED...', 'sys')
+  appendLog('加载羊皮纸纹理底层...', 'sys')
+  appendLog('应用 Multiply 正片叠底光学遮罩...', 'sys')
+  appendLog('唤醒非欧几里得 Canvas 渲染管线...', 'sys')
+  
+  bootTimeEngine()
+  setTimeout(bootRenderEngine, 500) // 延迟确保 DOM 尺寸就绪
+  
+  appendLog('V\'ZUOR 矩阵连接成功。神识已固定。', 'success')
 })
 
 onBeforeUnmount(() => {
-  clearInterval(timerInterval)
-  cancelAnimationFrame(animationId)
+  clearInterval(timeLoop)
 })
-
 </script>
 
 <style>
-/* ==========================================
-   [深渊美学与绝对网格布局系统]
-   ========================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Fira+Code:wght@400;700&display=swap');
+/* ============================================================================
+   [CSS 核心架构：融合、叠底与绝对隔离]
+   ============================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=IM+Fell+English+SC&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  /* 调色板: 虚空黑, 骨灰白, 终端绿, 祭祀红 */
-  --c-void: #050505;
-  --c-bone: #E2DED0;
-  --c-terminal: #00FF66;
-  --c-terminal-dim: #005522;
-  --c-crimson: #8B0000;
-  --c-crimson-bright: #FF1A1A;
-  --c-muted: #4A4A4A;
+  --c-text-main: #1a1515; /* 极深的棕黑，像干涸的墨水 */
+  --c-text-muted: #5c554b;
+  --c-blood: #8B0000;
+  --c-blood-bright: #cc0000;
   
   --f-title: 'Cinzel', serif;
-  --f-code: 'Fira Code', monospace;
+  --f-text: 'IM Fell English SC', serif;
+  --f-mono: 'Space Mono', monospace;
 }
 
-body, html {
-  margin: 0; padding: 0; width: 100%; height: 100%;
-  background-color: var(--c-void); color: var(--c-bone);
-  font-family: var(--f-code); overflow: hidden;
-  -webkit-font-smoothing: antialiased;
+html, body {
+  margin: 0; padding: 0; width: 100vw; height: 100vh;
+  background-color: #d1c8b4; /* Fallback color matching parchment */
+  color: var(--c-text-main); font-family: var(--f-mono);
+  overflow: hidden;
 }
 
-/* --- 全局特效 --- */
-.static-noise {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>');
-  opacity: 0.05;
-}
-.crt-scanlines {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  background-size: 100% 4px, 6px 100%;
+.nexus-root {
+  position: relative; width: 100%; height: 100%;
 }
 
-.text-crimson { color: var(--c-crimson-bright); }
-.text-bone { color: var(--c-bone); font-weight: bold; }
-.mt-auto { margin-top: auto; }
-.mt-2 { margin-top: 10px; }
-.mt-4 { margin-top: 20px; }
-
-/* 死亡回归全屏覆盖 */
-.death-return-active::after {
-  content: ''; position: fixed; inset: 0; z-index: 9999;
-  background: black; animation: death-flash 3s cubic-bezier(0.19, 1, 0.22, 1) forwards; pointer-events: none;
+/* ----------------------------------------------------------------------------
+   [第零层：绝对基石 - 羊皮纸]
+   ---------------------------------------------------------------------------- */
+.layer-0-parchment {
+  position: absolute; inset: 0; z-index: 0;
+  background-size: cover; background-position: center;
+  /* 略微降低对比度，让上面的墨水更明显 */
+  filter: contrast(0.95) brightness(1.05);
 }
-@keyframes death-flash { 0% { opacity: 1; background: var(--c-crimson-bright); } 10% { background: black; } 100% { opacity: 0; } }
+.micro-noise-overlay {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>');
+  opacity: 0.06;
+}
 
-/* --- 核心网格布局 (CSS Grid) --- */
-.grimoire-grid {
-  position: relative; z-index: 10;
-  width: 100vw; height: 100vh; padding: 2rem; box-sizing: border-box;
+/* ----------------------------------------------------------------------------
+   [第一层：静默侵蚀 - 墨迹叠加]
+   !!! 核心技术：mix-blend-mode: multiply !!!
+   这会将白底彻底变透明，只留下黑色墨迹和红色血迹融入纸张
+   ---------------------------------------------------------------------------- */
+.layer-1-corruption { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden;}
+.ink-asset {
+  position: absolute;
+  mix-blend-mode: multiply; /* 光学魔法 */
+  filter: contrast(1.2); /* 增强墨迹边缘 */
+  transition: all 2s ease;
+}
+
+.ink-top-left { top: -10%; left: -10%; width: 45vw; opacity: 0.85; }
+.ink-bottom-right { bottom: -15%; right: -5%; width: 50vw; opacity: 0.9; transform: rotate(-15deg); }
+.sketch-bg-left { top: 20%; left: 5%; width: 40vw; opacity: 0.15; filter: contrast(1) grayscale(100%); } /* 极淡的底图 */
+.hand-of-void { bottom: 0; left: 20%; width: 25vw; opacity: 0.7; transform: rotate(15deg) translateY(20px); animation: slight-reach 10s infinite alternate; }
+
+@keyframes slight-reach { 0% { transform: rotate(15deg) translateY(20px); } 100% { transform: rotate(10deg) translateY(-10px); } }
+
+/* ----------------------------------------------------------------------------
+   [第二层：Canvas 动态引擎]
+   正片叠底，使动态绘制的黑色触手和红色粒子完美融入纸张
+   ---------------------------------------------------------------------------- */
+.layer-2-canvas {
+  position: absolute; inset: 0; z-index: 10; pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ----------------------------------------------------------------------------
+   [第三层：受难祭坛核心]
+   ---------------------------------------------------------------------------- */
+.layer-3-altar {
+  position: absolute; inset: 0; z-index: 15; pointer-events: none;
+  display: flex; justify-content: center; align-items: center;
+}
+.altar-container {
+  position: relative; width: 450px; height: 600px;
+  display: flex; justify-content: center; align-items: center;
+}
+.crucifixion-totem {
+  width: 100%; height: auto;
+  mix-blend-mode: multiply; /* 剔除白底，保留红色太阳和黑色线条 */
+  filter: contrast(1.15) brightness(0.95);
+  animation: breathe 6s ease-in-out infinite;
+}
+
+/* 中央单词水池读数，浮在耶稣胸口/太阳位置 */
+.siphon-core {
+  position: absolute; top: 25%; display: flex; flex-direction: column; align-items: center;
+  mix-blend-mode: normal; /* 文字需要清晰，不叠底 */
+}
+.core-ring {
+  background: rgba(242, 239, 232, 0.85); border: 2px solid var(--c-text-main);
+  border-radius: 50%; width: 140px; height: 140px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+}
+.vocab-digit { font-family: var(--f-title); font-size: 2.8rem; font-weight: 900; line-height: 1; color: var(--c-blood); }
+.vocab-max { font-size: 0.8rem; color: var(--c-text-muted); font-weight: bold; }
+.core-label { margin-top: 15px; font-family: var(--f-text); font-size: 1.1rem; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px rgba(255,255,255,0.8); }
+
+/* 狂化时祭坛两侧喷出的鲜血 (墨迹4和5) */
+.blood-splash-left { top: 10%; left: -40%; width: 300px; opacity: 0; transform: scale(0.8) translateX(-50px); transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); mix-blend-mode: multiply; }
+.blood-splash-right { bottom: 10%; right: -40%; width: 350px; opacity: 0; transform: scale(0.8) translateX(50px); transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); mix-blend-mode: multiply; }
+.blood-splash-left.active, .blood-splash-right.active { opacity: 0.9; transform: scale(1) translateX(0); }
+
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.heartbeat { animation: heartbeat-anim 0.8s infinite !important; }
+@keyframes heartbeat-anim { 0% { transform: scale(1); } 15% { transform: scale(1.05); } 30% { transform: scale(1); } 45% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* ----------------------------------------------------------------------------
+   [第四层：秩序网格 CSS Grid]
+   在所有混沌与墨水之上，保持绝对理性的UI层
+   ---------------------------------------------------------------------------- */
+.layer-4-order-grid {
+  position: absolute; inset: 0; z-index: 50;
+  padding: 3rem; box-sizing: border-box;
   display: grid;
-  /* 严格的 3 列 3 行布局，彻底杜绝重叠 */
-  grid-template-columns: 320px 1fr 350px;
+  grid-template-columns: 350px 1fr 350px;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
     "header header header"
     "left center right"
     "footer footer footer";
-  gap: 2rem;
+  pointer-events: none; /* 让鼠标事件穿透到下层 Canvas，除了 grid-cell 内部 */
 }
 
-/* ==========================================
-   [顶部：Header]
-   ========================================== */
-.grid-header {
-  grid-area: header;
-  display: flex; justify-content: space-between; align-items: flex-end;
-  border-bottom: 2px solid var(--c-muted); padding-bottom: 1rem;
-}
-.title-construct { display: flex; flex-direction: column; }
-.eldritch-title {
-  font-family: var(--f-title); font-size: clamp(2rem, 3vw, 3.5rem);
-  font-weight: 900; margin: 0; letter-spacing: 0.1em;
-  text-shadow: 0 0 10px rgba(226, 222, 208, 0.2);
-}
-.sub-designation { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.75rem; color: var(--c-terminal-dim); }
-.blinking-eye { color: var(--c-crimson-bright); animation: blink 2s infinite; }
+.grid-cell { pointer-events: auto; }
 
-.chronos-construct { text-align: right; }
-.doom-timer { font-size: clamp(1.5rem, 2.5vw, 2.8rem); font-weight: 700; color: var(--c-bone); letter-spacing: -1px; }
-.timer-label { font-size: 0.65rem; color: var(--c-muted); letter-spacing: 2px; margin-top: 0.5rem; }
+/* 天极 */
+.header-zone { grid-area: header; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--c-text-main); padding-bottom: 1.5rem; }
+.artifact-title { font-family: var(--f-title); font-size: clamp(2rem, 3.5vw, 4rem); font-weight: 900; margin: 0; letter-spacing: 4px; }
+.artifact-sub { font-family: var(--f-mono); font-size: 0.8rem; font-weight: bold; margin-top: 10px; display: flex; align-items: center; gap: 10px; color: var(--c-text-muted); }
+.pulse-node { width: 8px; height: 8px; background: var(--c-blood); border-radius: 50%; animation: pulse-dot 2s infinite; }
 
-/* ==========================================
-   [左翼：Pillars & Forge]
-   ========================================== */
-.grid-left-pillar {
-  grid-area: left; display: flex; flex-direction: column;
-  border-right: 1px dashed var(--c-muted); padding-right: 2rem;
-}
-.section-title { font-size: 0.85rem; color: var(--c-muted); letter-spacing: 3px; border-bottom: 1px solid var(--c-muted); padding-bottom: 0.5rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+.time-block { text-align: right; }
+.doom-clock { font-size: clamp(1.8rem, 2.5vw, 3rem); font-weight: 700; line-height: 1; letter-spacing: -1px; }
+.doom-label { font-size: 0.75rem; font-weight: bold; color: var(--c-text-muted); margin-top: 8px; letter-spacing: 1px; }
 
-.pillar-list { display: flex; flex-direction: column; gap: 1.5rem; }
-.pillar-node { display: flex; align-items: center; gap: 1rem; opacity: 0.4; transition: opacity 0.3s; }
-.pillar-node.active { opacity: 1; }
-.pillar-node.active .node-icon { color: var(--c-terminal); text-shadow: 0 0 10px var(--c-terminal-dim); border-color: var(--c-terminal); }
-.pillar-node.active .node-status { color: var(--c-terminal); }
-.node-icon { width: 40px; height: 40px; border: 1px solid var(--c-muted); display: flex; align-items: center; justify-content: center; font-family: var(--f-title); font-size: 1.2rem; }
-.node-name { font-weight: 700; font-size: 0.9rem; }
-.node-status { font-size: 0.7rem; color: var(--c-muted); margin-top: 0.2rem; }
+/* 左渊 */
+.left-zone { grid-area: left; display: flex; flex-direction: column; padding-top: 2rem; }
+.zone-title { font-family: var(--f-text); font-size: 1.4rem; font-weight: bold; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 5px; margin-bottom: 1.5rem; letter-spacing: 2px; }
+.telemetry-matrix { display: flex; flex-direction: column; gap: 1.2rem; font-size: 0.9rem; font-weight: bold; }
+.t-row { display: flex; justify-content: space-between; align-items: center; }
+.t-key { color: var(--c-text-muted); }
+.t-val { font-size: 1.1rem; }
+.text-alert { color: var(--c-blood); }
+.text-hyper { color: var(--c-blood-bright); font-weight: 900; animation: jitter 0.1s infinite; }
 
-.forge-bar-container { width: 100%; }
-.forge-label { font-size: 0.75rem; margin-bottom: 0.5rem; color: var(--c-bone); }
-.forge-bar { height: 6px; background: #111; border: 1px solid var(--c-muted); }
-.forge-progress { height: 100%; background: var(--c-terminal); box-shadow: 0 0 10px var(--c-terminal-dim); }
-.forge-value { font-size: 1.5rem; font-weight: 700; }
+.asset-showcase { margin-top: auto; border: 1px dashed rgba(0,0,0,0.3); padding: 15px; text-align: center; background: rgba(255,255,255,0.1); backdrop-filter: blur(2px); }
+.mini-sketch { position: relative; width: 100%; height: auto; mix-blend-mode: multiply; filter: contrast(1.2); }
+.sketch-caption { font-family: var(--f-text); font-size: 0.8rem; font-weight: bold; margin: 10px 0 0 0; color: var(--c-text-muted); }
 
-/* ==========================================
-   [中枢：Rift Canvas]
-   ========================================== */
-.grid-center-rift {
-  grid-area: center; display: flex; justify-content: center; align-items: center;
-  position: relative;
-}
-.rift-containment {
-  width: 100%; max-width: 450px; aspect-ratio: 3/4;
-  position: relative; border: 1px solid var(--c-muted);
-  background: #020202; overflow: hidden;
-  /* 关键：应用 SVG 扭曲滤镜制造不可名状感 */
-  filter: url(#flesh-warp);
-  box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.9);
-  border-radius: 5px 50px 5px 50px; /* 异形裁剪 */
-}
-.rift-canvas { width: 100%; height: 100%; display: block; }
-.rift-overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%); pointer-events: none; }
+/* 右渊 */
+.right-zone { grid-area: right; display: flex; flex-direction: column; padding-top: 2rem; }
+.record-scroll { flex: 1; border: 1px solid rgba(0,0,0,0.2); background: rgba(0,0,0,0.03); padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; font-size: 0.75rem; box-shadow: inset 0 0 15px rgba(0,0,0,0.05); }
+/* 滚动条隐藏 */
+.record-scroll::-webkit-scrollbar { width: 4px; }
+.record-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); }
+.log-line { display: flex; gap: 10px; line-height: 1.4; font-weight: bold; }
+.log-ts { color: var(--c-text-muted); flex-shrink: 0; }
+.log-line.sys .log-msg { color: #333; }
+.log-line.echo .log-msg { color: var(--c-text-muted); font-style: italic; }
+.log-line.success .log-msg { color: #006600; }
+.log-line.alert .log-msg, .log-line.error .log-msg { color: var(--c-blood); }
 
-.sanity-centerpiece {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; pointer-events: none; z-index: 5;
-  background: rgba(5,5,5,0.7); padding: 1.5rem; border: 1px solid var(--c-muted);
-  backdrop-filter: blur(4px); border-radius: 50%; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center;
-}
-.vocab-number { font-family: var(--f-title); font-size: 3rem; font-weight: 900; color: var(--c-bone); }
-.vocab-total { font-size: 1rem; color: var(--c-muted); }
-.vocab-label { font-size: 0.6rem; letter-spacing: 2px; margin-top: 0.5rem; color: var(--c-terminal-dim); }
+/* 地极 */
+.footer-zone { grid-area: footer; border-top: 2px solid var(--c-text-main); padding-top: 1.5rem; display: flex; align-items: center; }
+.terminal-input-wrap { width: 100%; display: flex; align-items: center; gap: 1rem; }
+.cli-arrow { font-size: 1.8rem; font-weight: 900; color: var(--c-text-main); }
+.cli-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--f-text); font-size: 1.8rem; font-weight: bold; color: var(--c-text-main); letter-spacing: 1px; }
+.cli-input::placeholder { color: var(--c-text-muted); opacity: 0.5; font-style: italic; font-family: var(--f-mono); font-size: 1rem; letter-spacing: 0; }
 
-/* ==========================================
-   [右翼：Log & Sanity]
-   ========================================== */
-.grid-right-log {
-  grid-area: right; display: flex; flex-direction: column;
-  border-left: 1px dashed var(--c-muted); padding-left: 2rem;
-}
-.metric-block { display: flex; flex-direction: column; gap: 1rem; font-size: 0.85rem; }
-.metric-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; }
+/* ----------------------------------------------------------------------------
+   [系统级特效]
+   ---------------------------------------------------------------------------- */
+.sanity-break-overlay { position: fixed; inset: 0; z-index: 9999; background: black; display: flex; justify-content: center; align-items: center; animation: break-flash 4s forwards; }
+.glitch-huge { font-family: var(--f-title); font-size: 8rem; color: white; animation: text-glitch 0.1s infinite; }
 
-.terminal-history {
-  flex: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid var(--c-muted);
-  padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;
-  font-size: 0.75rem; line-height: 1.4; scrollbar-width: thin; scrollbar-color: var(--c-muted) transparent;
-}
-.log-entry { display: flex; gap: 0.5rem; word-break: break-all; }
-.log-time { color: var(--c-muted); flex-shrink: 0; }
-.log-entry.info .log-msg { color: var(--c-bone); }
-.log-entry.sys .log-msg { color: var(--c-terminal-dim); }
-.log-entry.echo .log-msg { color: #888; font-style: italic; }
-.log-entry.success .log-msg { color: var(--c-terminal); }
-.log-entry.error .log-msg { color: var(--c-crimson-bright); }
+@keyframes pulse-dot { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } }
+@keyframes jitter { 0% { transform: translateX(1px); } 50% { transform: translateX(-1px); } 100% { transform: translateX(0); } }
+@keyframes text-glitch { 0% { transform: translate(3px, -3px); color: red; } 50% { transform: translate(-3px, 3px); color: cyan; } 100% { transform: translate(0,0); color: white; } }
+@keyframes break-flash { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
 
-/* ==========================================
-   [底部：CLI Footer]
-   ========================================== */
-.grid-footer {
-  grid-area: footer; display: flex; align-items: center; gap: 1rem;
-  border-top: 2px solid var(--c-muted); padding-top: 1rem;
-}
-.cli-prefix { color: var(--c-terminal); font-weight: 700; font-size: 1.2rem; }
-.cli-input {
-  flex: 1; background: transparent; border: none; outline: none;
-  color: var(--c-bone); font-family: var(--f-code); font-size: 1.2rem;
-}
-.cli-input::placeholder { color: var(--c-muted); font-style: italic; }
-
-/* ==========================================
-   [状态变形：狂化与理智丧失]
-   ========================================== */
-.realm-hyper {
-  --c-void: #1a0000; --c-bone: #ffcccc; --c-terminal: #ff1a1a; --c-terminal-dim: #8b0000;
-}
-.realm-hyper .grimoire-grid { animation: shake 0.5s infinite; }
-.realm-hyper .rift-containment { box-shadow: 0 0 100px rgba(255,0,0,0.5); border-color: var(--c-crimson-bright); filter: url(#flesh-warp) drop-shadow(0 0 20px red); }
-
-.realm-corrupted .eldritch-title { animation: text-glitch 0.2s infinite; filter: url(#sanity-glitch); }
-.realm-corrupted .void-background { background: white; filter: invert(1); }
-.realm-corrupted .static-noise { opacity: 0.2; }
-
-/* ==========================================
-   [动画 Keyframes]
-   ========================================== */
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes shake { 0% { transform: translate(1px,1px); } 25% { transform: translate(-1px,-1px); } 50% { transform: translate(-1px,1px); } 75% { transform: translate(1px,-1px); } 100% { transform: translate(1px,1px); } }
-@keyframes text-glitch { 0% { transform: skewX(2deg); } 50% { transform: skewX(-2deg); } 100% { transform: skewX(0); } }
-
-/* ==========================================
-   [响应式降级防御]
-   ========================================== */
+/* 响应式防御 (保证网格在小屏幕缩小但不乱) */
 @media (max-width: 1200px) {
-  .grimoire-grid {
+  .layer-4-order-grid { grid-template-columns: 250px 1fr 250px; padding: 1.5rem; }
+  .crucifixion-totem { width: 80%; }
+}
+@media (max-width: 900px) {
+  .layer-4-order-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto 500px auto auto;
+    grid-template-rows: auto auto auto auto auto;
     grid-template-areas: "header" "center" "left" "right" "footer";
-    overflow-y: auto; height: auto;
+    overflow-y: auto; height: 100%; pointer-events: auto;
   }
-  .grid-left-pillar, .grid-right-log { border: none; padding: 0; border-top: 1px dashed var(--c-muted); padding-top: 2rem; }
-  .rift-containment { max-width: 100%; }
+  .layer-3-altar { position: relative; height: 500px; }
 }
 </style>
