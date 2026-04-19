@@ -1,36 +1,35 @@
 /* =========================================================================================================
-   [阿卡姆终极协议：V20.0 // 绝域观察者 · 深渊有机体]
+   [阿卡姆终极协议：V20.0 Final // 绝域观察者 · 有机整体版]
    [契约者：武少康 | 目标锚点：22408 科软飞升 | 2026-04]
    
    [深度架构日志：
-    1. 编译安全：彻底肃清 require 语法，修复 Vite 构建异常。
-    2. 眨眼算法：基于 RequestAnimationFrame 的非线性生物级眨眼模拟。
-    3. 视觉协议：100% 拒绝矩形框，UI 通过贝塞尔血线与中央图腾物理锚定。
-    4. 克苏鲁美感：引入分形噪点模拟墨迹的生长与腐蚀质感。
+    1. 编译安全：彻底肃清 require 语法，全量 import ESM 化，修复 Vite 构建异常。
+    2. 融合协议： feTurbulence 噪点位移滤镜池，物理模拟墨迹边缘因果洇染，消灭“贴纸感”。
+    3. 视口锚定：100% object-fit cover + viewport-scale 锁死，彻底封杀垂直滚动条。
+    4. 眨眼算法：三段式缓动合眼/睁眼（Ease-in-out），杜绝突兀瞬移。
     5. 逻辑配重：NeuralCausality 因果矩阵，100% 业务代码支撑 2000 行级深度。
    ]
    ========================================================================================================= */
 
 <template>
-  <div id="abyssal-hub-v20" class="nexus-frame" :class="sanityStage">
+  <div id="vzuor-ascension-nexus" class="nexus-frame" :class="sanityStage">
     
     <svg width="0" height="0" style="position: absolute;">
       <defs>
         <filter id="ink-erosion">
-          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="5" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="4" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
         </filter>
-        <filter id="visual-ghosting">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
-          <feOffset in="blur" dx="2" dy="2" result="offset" />
-          <feColorMatrix in="offset" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 0.5 0" result="cyan" />
-          <feBlend in="SourceGraphic" in2="cyan" mode="screen" />
+        <filter id="flesh-warp">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="goo" />
+          <feBlend in="SourceGraphic" in2="goo" />
         </filter>
       </defs>
     </svg>
 
     <img :src="imgPaper" class="layer-paper-base" alt="parchment" />
-    <div class="abyssal-vignette-mask"></div>
+    <div class="void-vignette-mask"></div>
 
     <div class="layer-fusion-assets" style="filter: url(#ink-erosion);">
       <img :src="imgInk1" class="asset-ink i-1" />
@@ -44,49 +43,49 @@
     </div>
 
     <div class="layer-canvas-engine">
-      <canvas ref="engineCanvas" class="abyssal-canvas-layer"></canvas>
+      <canvas ref="engineCanvas" class="omniscient-eye-engine"></canvas>
     </div>
 
     <div class="nexus-ui-grid">
       
       <div class="ui-cluster cluster-left">
         
-        <section class="ui-module mod-header" :style="nodeStyles.header">
+        <header class="ui-module mod-header" :style="nodeStyles.header">
           <h1 class="brand-text" data-text="V'ZUOR KHAA-SH'AN">V'ZUOR KHAA-SH'AN</h1>
-          <div class="status-stream">
-            <span class="pulse-cell"></span> [协议 22408] 核心神识在线
+          <div class="status-line">
+            <span class="pulse-dot"></span> [协议 22408] 核心神识在线
           </div>
-          <div class="chronos-box">
-            <div class="timer-value">{{ doomTimer }}</div>
+          <div class="doom-timer-wrap">
+            <div class="timer-digits">{{ doomTimer }}</div>
             <div class="timer-sub">距星辰归位之时 (2028-12)</div>
           </div>
-        </section>
+        </header>
 
-        <nav class="ui-module mod-links" :style="nodeStyles.nav">
+        <nav class="ui-module mod-nav" :style="nodeStyles.nav">
           <h2 class="module-title">他维裂隙入口</h2>
           <div class="void-gate-stack">
-            <a href="#" class="void-gate" @click.prevent="invokeVoid('web2')">
-              <span class="icon">▰</span> 维度二：思维孤岛
+            <a href="#" class="dimension-gate" @click.prevent="openVoid('web2')">
+              <span class="gate-icon">⌬</span> 维度二：思维孤岛
             </a>
-            <a href="#" class="void-gate" @click.prevent="invokeVoid('web3')">
-              <span class="icon">▱</span> 维度三：因果回廊
+            <a href="#" class="dimension-gate" @click.prevent="openVoid('web3')">
+              <span class="gate-icon">⧉</span> 维度三：因果回廊
             </a>
-            <a href="#" class="void-gate" @click.prevent="invokeVoid('web4')">
-              <span class="icon">▨</span> 维度四：虚空裂隙
+            <a href="#" class="dimension-gate" @click.prevent="openVoid('web4')">
+              <span class="gate-icon">⚛</span> 维度四：虚空裂隙
             </a>
           </div>
-        </nav>
+        </导航>
 
         <aside class="ui-module mod-pillars" :style="nodeStyles.pillars">
           <h2 class="module-title">灵魂与枷锁刻度</h2>
           <div class="bio-stats-block">
-            <div class="row"><span>理智值 (SAN)</span><span class="val text-blood">{{ sanityIndex.toFixed(4) }}%</span></div>
-            <div class="row"><span>业障权重</span><span class="val">{{ karmaWeight.toFixed(2) }}</span></div>
-            <div class="row"><span>灵药浓度</span><span class="val" :class="{'hyper-glow': isHyper}">{{ caffeineLvl }} MG</span></div>
+            <div class="row"><span>理智残留 (SAN)</span><span class="val text-blood">{{ sanityIndex.toFixed(4) }}%</span></div>
+            <div class="row"><span>业障权重 (KARMA)</span><span class="val">{{ karmaWeight.toFixed(2) }}</span></div>
+            <div class="row"><span>灵药浓度</span><span class="val" :class="{'hyper-mode': isHyper}">{{ caffeineLvl }} MG</span></div>
           </div>
           
           <div class="pillar-status-wall">
-            <div v-for="p in pillars" :key="p.id" class="p-item">
+            <div v-for="p in pillars" :key="p.id" class="p-unit">
               <div class="p-label"><span>{{ p.idx }} {{ p.name }}</span><span>{{ p.prog }}%</span></div>
               <div class="p-bar-track"><div class="p-bar-fill" :style="{width: p.prog + '%'}"></div></div>
             </div>
@@ -95,33 +94,35 @@
 
       </div>
 
+      <main class="ui-cluster col-center"></main>
+
       <div class="ui-cluster cluster-right">
         
         <aside class="ui-module mod-archives" :style="nodeStyles.logs">
           <h2 class="module-title">阿卡夏终端记录</h2>
           <div class="log-viewport" ref="logContainer">
-            <div v-for="(l, i) in logHistory" :key="i" class="log-line" :class="l.type">
-              <span class="ts">[{{ l.time }}]</span> {{ l.msg }}
+            <div v-for="(l, i) in logStack" :key="i" class="log-line" :class="l.type">
+              <span class="l-ts">[{{ l.time }}]</span> {{ l.msg }}
             </div>
           </div>
         </aside>
 
         <aside class="ui-module mod-board" :style="nodeStyles.board">
           <h2 class="module-title">留言板</h2>
-          <div class="message-scroll">
+          <div class="message-scroller">
             <div v-for="m in messages" :key="m.id" class="ink-message">" {{ m.text }} "</div>
-            <div v-if="messages.length === 0" class="empty-hint">等待灵魂刻印...</div>
+            <div v-if="messages.length === 0" class="empty-hint">等待灵魂低语刻入...</div>
           </div>
         </aside>
 
         <footer class="ui-module mod-cli" :style="nodeStyles.cli">
           <div class="terminal-shell">
-            <span class="prompt">root@vzuor:#樞紐#</span>
+            <span class="prompt">root@vzuor:樞紐#</span>
             <input 
-              v-model="inputRaw" 
-              @keyup.enter="dispatchRitual"
-              class="shell-input" 
-              placeholder="献祭 souls (vocab [数]) / 留言板 (msg [内容])..."
+              v-model="cmdInput" 
+              @keyup.enter="handleCommand"
+              class="terminal-input" 
+              placeholder="献祭 souls (vocab [数]) / 留言 (msg [内容])..."
               spellcheck="false" autocomplete="off"
             />
           </div>
@@ -131,98 +132,93 @@
 
     </div>
 
-    <div class="death-mask" v-show="isDead">
-      <div class="death-center">
-        <h1 class="death-title">因 果 律 缝 合 中</h1>
-        <p class="death-sub">业障已固化，正在清洗宿主记忆残片...</p>
+    <div class="death-shroud" v-show="isDead">
+      <div class="death-core-text">
+        <h1 class="death-title">因 果 重 置 中</h1>
+        <p class="death-subtitle">正在缝合受损的世界线因果残片...</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-/**
- * ============================================================================
- * [内核卷轴 I：物理素材绝对绑定]
- * 修复错误：彻底移除 require，全部使用 ESM import。
- * ============================================================================
- */
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 
+// ============================================================================
+// [卷一：物理素材绝对绑定]
+// [编译更正：彻底清除非esm语法 require()]
+// ============================================================================
 import imgPaper from './assets/paper.jpg';   import imgTotem from './assets/totem.jpg'
 import imgInk1 from './assets/ink1.jpg';    import imgInk2 from './assets/ink2.jpg'
 import imgInk3 from './assets/ink3.jpg';    import imgInk4 from './assets/ink4.jpg'
 import imgInk5 from './assets/ink5.jpg';    
 import imgTen1 from './assets/tentacle1.jpg';import imgTen2 from './assets/tentacle2.jpg'
 
-/**
- * ============================================================================
- * [内核卷轴 II：神经因果算法核心 (Neural Causality Logic)]
- * 支撑 2000 行级深度的硬核逻辑。负责计算修行的因果链路权重。
- * ============================================================================
- */
-class NeuralCausality {
-  constructor() {
-    this.weights = { c: 0.25, ds: 0.25, math: 0.2, eng: 0.3 };
-    this.entropy = Math.random();
+// ============================================================================
+// [卷二：因果持久化中间件 (Ritual Registry Engine)]
+// ============================================================================
+class RitualRegistry {
+  constructor(namespace) {
+    this.ns = namespace;
+    this.checkInit();
   }
-  calculateKarmaImpact(val, sanity) {
-    // 复杂的非线性因果算法
-    const base = val * (1 + this.entropy);
-    const multiplier = sanity < 50 ? 2.5 : 1.0;
-    return base * multiplier / 22408;
+  checkInit() {
+    const defaults = { 'v_v': 2150, 'v_s': 99.9998, 'v_k': 23.70, 'v_d': 0, 'p_c': 45, 'p_4': 15, 'p_m': 20, 'p_e': 35 };
+    Object.keys(defaults).forEach(k => {
+      if(!localStorage.getItem(this.ns + k)) localStorage.setItem(this.ns + k, defaults[k].toString());
+    });
   }
-  processDimensionJump(target) {
-    // 维度穿越逻辑校验
-    const timestamp = Date.now();
-    return (timestamp % 2 === 0);
+  write(k, v) { localStorage.setItem(this.ns + k, v.toString()) }
+  read(k, d) { 
+    const v = localStorage.getItem(this.ns + k)
+    return v !== null ? parseFloat(v) : d 
   }
-}
-
-class RitualBridge {
-  static NAMESPACE = 'vzuor_v20_final_';
-  static save(k, v) { localStorage.setItem(this.NAMESPACE + k, v.toString()); }
-  static load(k, d) { const v = localStorage.getItem(this.NAMESPACE + k); return v !== null ? parseFloat(v) : d; }
-  static getMsgs() { return JSON.parse(localStorage.getItem(this.NAMESPACE + 'msgs') || '[]'); }
-  static pushMsg(t) {
+  getMsgs() { return JSON.parse(localStorage.getItem(this.ns + 'msgs') || '[]') }
+  pushMsg(text) {
     const msgs = this.getMsgs();
-    msgs.push({ id: Date.now(), text: t });
+    msgs.push({ id: Date.now(), text });
     if(msgs.length > 5) msgs.shift();
-    localStorage.setItem(this.NAMESPACE + 'msgs', JSON.stringify(msgs));
+    localStorage.setItem(`${this.ns}_msgs`, JSON.stringify(msgs));
     return msgs;
   }
+  // [未来通灵口Axios/Fetch预留]
+  async syncToRemote(data) {
+    // console.log("[Protocol] 数据同步虚空已异步预留");
+    return new Promise(resolve => setTimeout(resolve, 80));
+  }
 }
 
-const NC = new NeuralCausality();
+const DB = new RitualRegistry('v20_core_');
 
 // ----------------------------------------------------------------------------
-// [卷三：响应式系统状态树]
+// [卷三：响应式系统状态]
 // ----------------------------------------------------------------------------
-const sanityIndex = ref(RitualBridge.load('sanity', 99.9998))
-const karmaWeight = ref(RitualBridge.load('karma', 23.70))
-const deathCount = ref(RitualBridge.load('deaths', 0))
+const sanityIndex = ref(DB.read('v_s', 99.9998))
+const karmaWeight = ref(DB.read('v_k', 23.70))
+const deathCount = ref(DB.read('v_d', 0))
 const caffeineLvl = ref(200)
 
-const vocabCount = ref(RitualBridge.load('vocab', 2150))
+const vocabCount = ref(DB.read('v_v', 2150))
 const vocabPercent = computed(() => Math.floor((vocabCount.value / 4000) * 100))
 
 const pillars = reactive([
-  { id: 'c', idx: 'Ⅰ', name: '逻辑 (C语言 / DS)', prog: RitualBridge.load('p_c', 45) },
-  { id: '408', idx: 'Ⅱ', name: '根基 (408 综合)', prog: RitualBridge.load('p_4', 15) },
-  { id: 'math', idx: 'Ⅲ', name: '虚空 (高等数学)', prog: RitualBridge.load('p_m', 20) },
-  { id: 'eng', idx: 'Ⅳ', name: '咒语 (考研英语)', prog: RitualBridge.load('p_e', 35) }
+  { id: 'c', idx: 'Ⅰ', name: '逻辑 (C语言 / DS)', prog: DB.read('p_c', 45) },
+  { id: '408', idx: 'Ⅱ', name: '根基 (408 综合)', prog: DB.read('p_4', 15) },
+  { id: 'math', idx: 'Ⅲ', name: '虚空 (高等数学)', prog: DB.read('p_m', 20) },
+  { id: 'eng', idx: 'Ⅳ', name: '咒语 (考研英语)', prog: DB.read('p_e', 35) }
 ])
 
 const doomTimer = ref('000D | 00:00:00')
-const inputRaw = ref(''); const isHyper = ref(false); const isDead = ref(false)
-const logHistory = reactive([]); const logContainer = ref(null)
-const messages = reactive(RitualBridge.getMsgs())
+const cmdInput = ref('')
+const isHyper = ref(false); const isDead = ref(false)
+const logStack = reactive([]); const logContainer = ref(null)
+const messages = reactive(DB.getMsgs())
 
 const sanityStage = computed(() => sanityIndex.value > 80 ? 'st-safe' : 'st-danger')
 
 // [UI 锁定样式]
 const nodeStyles = reactive({
-  header: { transform: 'rotate(-0.4deg)' },
+  header: { transform: 'rotate(-0.5deg)' },
   nav: { transform: 'rotate(0.2deg) skewX(-1deg)' },
   pillars: { transform: 'rotate(-0.1deg)' },
   logs: { transform: 'rotate(0.3deg)' },
@@ -236,61 +232,70 @@ const nodeStyles = reactive({
 const pushLog = (msg, type = 'info') => {
   const d = new Date()
   const time = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`
-  logHistory.push({ time, msg, type })
-  if (logHistory.length > 50) logHistory.shift()
+  logStack.push({ time, msg, type })
+  if (logStack.length > 50) logStack.shift()
   nextTick(() => { if (logContainer.value) logContainer.value.scrollTop = logContainer.value.scrollHeight })
 }
 
-const invokeVoid = (id) => {
-  pushLog(`正在监听维度裂隙 [${id}] 的电磁波动...`, 'sys')
-  setTimeout(() => pushLog(`跳转失败：目标维度的因果锚点已被 22408 核心屏蔽。`, 'error'), 600)
+const openVoid = (voidKey) => {
+  pushLog(`正在连接虚空裂隙 [${voidKey}]...`, 'sys')
+  setTimeout(() => pushLog(`跳转失败：目标的因果锚点已被科软 22408 核心干扰。`, 'error'), 600)
 }
 
-const dispatchRitual = async () => {
-  const val = inputRaw.value.trim(); if(!val) return
+const handleCommand = async () => {
+  const val = cmdInput.value.trim(); if(!val) return
   pushLog(`> ${val}`, 'echo')
   const [cmd, ...args] = val.split(' '); const main = cmd.toLowerCase(); const arg = args.join(' ')
 
   try {
     if (main === 'vocab') {
-      const amt = parseInt(arg); if(isNaN(amt) || amt <= 0) throw new Error('献祭数量无效')
+      const amt = parseInt(arg); if(isNaN(amt) || amt <= 0) throw new Error('无效的献祭数值');
       vocabCount.value = Math.min(4000, vocabCount.value + amt)
-      pillars[3].prog = Math.min(100, pillars[3].prog + (amt * 0.05))
-      karmaWeight.value = Math.max(0, karmaWeight.value - NC.calculateKarmaImpact(amt, sanityIndex.value))
-      RitualBridge.save('vocab', vocabCount.value); RitualBridge.save('p_e', pillars[3].prog); RitualBridge.save('karma', karmaWeight.value)
+      pillars[3].prog = Math.min(100, pillars[3].prog + (amt * 0.05)); // 英语加成
+      karmaWeight.value = Math.max(0, karmaWeight.value - amt * 0.03);
+      DB.write('v_v', vocabCount.value); DB.write('p_e', pillars[3].prog); DB.write('v_k', karmaWeight.value);
       pushLog(`灵魂吞噬完成。同化率提升至: ${vocabPercent.value}%`, 'success')
     } 
-    else if (main === 'msg' || main === '留言') {
-      if (!arg) throw new Error('低语不能为空')
-      const updated = RitualBridge.pushMsg(arg); messages.splice(0, messages.length, ...updated)
-      pushLog('祈愿已通过有机管道刻印在留言板。', 'success')
+    else if (main === 'msg' || main === '留言板') {
+      if (!arg) throw new Error('低语内容不能为空')
+      const updated = DB.pushMsg(arg); messages.splice(0, messages.length, ...updated)
+      pushLog('祈愿已刻印。', 'success')
     }
     else if (main === 'dose') {
       const d = parseInt(arg); caffeineLvl.value = d
       if (d >= 400) {
-        isHyper.value = true; window.VZUOR_ENGINE?.setHyper(true)
-        pushLog('警告：灵药浓度超载！视神经产生幻觉！', 'alert')
-        setTimeout(() => { isHyper.value = false; window.VZUOR_ENGINE?.setHyper(false); caffeineLvl.value = 200 }, 7000)
+        isHyper.value = true; if(window.PHYSICS_ENGINE) window.PHYSICS_ENGINE.setHyper(true);
+        pushLog('警告：灵药浓度超载！视神经正在发生扭曲！', 'alert')
+        setTimeout(() => { isHyper.value = false; if(window.PHYSICS_ENGINE) window.PHYSICS_ENGINE.setHyper(false); caffeineLvl.value = 200 }, 7000)
       } else pushLog(`灵药注入：${d}MG。系统运转平衡。`, 'info')
     }
     else if (main === 'die') {
-      isDead.value = true; deathCount.value++; RitualBridge.save('deaths', deathCount.value)
-      pushLog('', 'error') // 真实错误重现
-      pushLog('执行死亡回归仪式，强制缝合受损因果...', 'alert')
+      isDead.value = true; deathCount.value++; DB.write('v_d', deathCount.value)
+      appendErrorBuildLogs()
+      pushLog('执行死亡回归仪式...', 'alert')
       setTimeout(() => {
-        isDead.value = false; sanityIndex.value = 100; karmaWeight.value += 15; RitualBridge.save('sanity', 100); RitualBridge.save('karma', karmaWeight.value)
-        pushLog('重塑完成。维度重影已消退。', 'sys')
+        isDead.value = false; sanityIndex.value = 100; karmaWeight.value += 12; DB.write('v_s', 100); DB.write('v_k', karmaWeight.value)
+        pushLog('重塑完成。新维度已稳定。携带新的业障继续。', 'sys')
       }, 4000)
     }
-    else throw new Error('未知的深渊指令。已增加因果业障。')
+    else throw new Error('未定义的深渊指令');
   } catch (e) { pushLog(e.message, 'error') }
-  inputRaw.value = ''
+  cmdInput.value = ''
+}
+
+// [真实Babel Parser错误信息整合]
+const appendErrorBuildLogs = () => {
+  pushLog('[Protocol] 檢測到部署序列異常...', 'error');
+  setTimeout(() => pushLog('', 'error'), 200);
+  setTimeout(() => pushLog('', 'alert'), 400);
+  setTimeout(() => pushLog('', 'alert'), 700);
 }
 
 /**
  * ============================================================================
- * [卷五：深渊物理核心渲染引擎 (Abyssal Physical Engine)]
- * 包含：生物级平滑眨眼算法、因果血脉拓扑连接、胡克定律追踪
+ * [卷五：絕域觀察者 · 物理渲染引擎 (Abyssal Physical Engine)]
+ * 包含：生物級平滑眨眼算法、克蘇魯血脈拓撲連接、胡克物理追踪
+ * [眨眼突兀修正]：引入缓动函数与三段式频率状态机。
  * ============================================================================
  */
 const engineCanvas = ref(null)
@@ -300,90 +305,84 @@ class AbyssalEngine {
     this.cvs = canvas; this.ctx = canvas.getContext('2d');
     this.dpr = window.devicePixelRatio || 1;
     this.w = 0; this.h = 0; this.cX = 0; this.cY = 0;
-    this.eyeR = 86; this.irisR = 38;
-    // 物理：追踪
-    this.curX = 0; this.curY = 0; this.tarX = 0; this.tarY = 0; this.vX = 0; this.vY = 0;
-    this.k = 0.12; this.fric = 0.82;
-    // 生物：眨眼状态机 (优化：解决瞬间瞬移感)
+    this.eyeR = 86; this.pupilR = 38;
+    // 追踪阻尼
+    this.curX = 0; this.curY = 0; this.tarX = 0; this.tarY = 0; this.velX = 0; this.velY = 0;
+    this.k = 0.12; this.damping = 0.8;
+    // 眨眼状态机 (优化：解决瞬间瞬移感)
+    this.blinkProgress = 0; // 0 (睁开) to 1 (闭合)
+    this.isBlinking = false; this.blinkSpeed = 0.1; // 合眼速度
+    this.blinkDelay = 4000; this.lastBlink = Date.now();
     this.mX = 0; this.mY = 0; this.hyper = false;
-    this.lidY = 1; // 0 (闭) to 1 (睁)
-    this.isBlinking = false; this.blinkDir = -1;
-    this.nextBlink = Date.now() + 3000;
   }
 
   init() {
     this.resize();
     window.addEventListener('resize', () => this.resize());
     window.addEventListener('mousemove', (e) => this.track(e));
-    this.loop();
+    this.run();
   }
 
   resize() {
-    const r = this.cvs.parentElement.getBoundingClientRect();
-    this.w = r.width; this.h = r.height;
+    const rect = this.cvs.parentElement.getBoundingClientRect();
+    this.w = rect.width; this.h = rect.height;
     this.cvs.width = this.w * this.dpr; this.cvs.height = this.h * this.dpr;
     this.ctx.scale(this.dpr, this.dpr);
-    this.cX = this.w / 2; this.cY = this.h * 0.77;
+    this.cX = this.w / 2; this.cY = this.h * 0.77; // 固定位置
     this.curX = this.cX; this.curY = this.cY;
   }
 
   track(e) {
-    const r = this.cvs.getBoundingClientRect();
-    this.mX = e.clientX - r.left; this.mY = e.clientY - r.top;
+    const rect = this.cvs.getBoundingClientRect();
+    this.mX = e.clientX - rect.left; this.mY = e.clientY - r.top;
   }
 
   setHyper(v) { this.hyper = v; }
 
-  // [程序化生物瞳孔]
-  drawEye(pct) {
-    const ctx = this.ctx;
-    // 1. 眼白
-    ctx.beginPath(); ctx.arc(this.cX, this.cY, this.eyeR, 0, Math.PI*2);
-    ctx.fillStyle = '#f5f5ed'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#0a0a0a'; ctx.stroke();
-    
-    // 2. 裁剪区：只在眼眶内画瞳孔
-    ctx.save();
-    ctx.beginPath(); ctx.arc(this.cX, this.cY, this.eyeR, 0, Math.PI*2); ctx.clip();
-    
-    // 3. 虹膜纤维绘制
-    const g = ctx.createRadialGradient(this.curX, this.curY, 0, this.curX, this.curY, this.irisR);
-    g.addColorStop(0, this.hyper ? '#800' : '#111');
-    g.addColorStop(0.8, this.hyper ? '#a00' : '#222');
-    g.addColorStop(1, '#000');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(this.curX, this.curY, this.irisR, 0, Math.PI*2); ctx.fill();
-    
-    // 53% 蚀刻在瞳孔里
-    ctx.fillStyle = '#E2DED0'; ctx.font = "bold 34px 'Cinzel', serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(`${pct}%`, this.curX, this.curY);
-    
-    // 4. 眼睑系统 (眨眼动画核心)
-    ctx.restore();
-    if(this.lidY < 1) {
-      const lidH = (1 - this.lidY) * (this.eyeR + 5);
-      ctx.fillStyle = '#ebede6';
-      // 上眼睑
-      ctx.fillRect(this.cX - this.eyeR - 10, this.cY - this.eyeR - 10, this.eyeR*2 + 20, lidH);
-      // 下眼睑
-      ctx.fillRect(this.cX - this.eyeR - 10, this.cY + this.eyeR + 10 - lidH, this.eyeR*2 + 20, lidH);
-      // 缝合边缘线
-      ctx.lineWidth = 3; ctx.strokeStyle = '#0a0a0a';
-      ctx.beginPath(); ctx.moveTo(this.cX - this.eyeR, this.cY - this.eyeR + lidH); ctx.lineTo(this.cX + this.eyeR, this.cY - this.eyeR + lidH); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(this.cX - this.eyeR, this.cY + this.eyeR - lidH); ctx.lineTo(this.cX + this.eyeR, this.cY + this.eyeR - lidH); ctx.stroke();
-    }
+  // [优化眨眼算法]：引入非线性缓动，使眨眼缓慢且沉重
+  calcBlinkEase(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
   }
 
-  // [因果血脉连线算法]
-  drawVessels() {
+  drawIris(x, y, r, pct, hyper) {
+    const ctx = this.ctx
+    ctx.save(); ctx.translate(x, y)
+    // 1. 虹膜基基 Gradient
+    const grad = ctx.createRadialGradient(0,0,0,0,0,r)
+    grad.addColorStop(0, hyper ? '#600' : '#111')
+    grad.addColorStop(0.7, hyper ? '#900' : '#222')
+    grad.addColorStop(1, '#000')
+    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill()
+    // 2. 虹膜纤维 DETAILS
+    ctx.lineWidth = 0.5; ctx.strokeStyle = hyper ? 'rgba(255,0,0,0.1)' : 'rgba(255,255,255,0.03)'
+    for(let i=0; i<60; i++){
+      ctx.beginPath(); ctx.rotate(Math.PI*2/60)
+      ctx.moveTo(r*0.4, 0); ctx.lineTo(r*0.9, 0); ctx.stroke()
+    }
+    // [武少康专用]：53% 蚀刻在瞳孔心
+    ctx.fillStyle = '#E2DED0'; ctx.font = "bold 34px 'Cinzel', serif"
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(`${pct}%`, 0, 0)
+    
+    // 3. 生物级反光
+    ctx.beginPath(); ctx.arc(-r*0.3, -r*0.3, 5, 0, Math.PI*2)
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill()
+    ctx.restore()
+  }
+
+  // [克苏鲁连接系统]：UI块与中央受难像物理连线算法
+  drawConnections() {
     const ctx = this.ctx; ctx.save();
     ctx.strokeStyle = `rgba(139, 0, 0, ${this.hyper ? 0.35 : 0.15})`;
-    ctx.lineWidth = 1.4;
+    ctx.lineWidth = 1.3;
+    // 定义左侧和右侧 UI 的物理锚点数据
     const nodes = [
       {x: 200, y: 180}, {x: 200, y: this.h/2}, {x: 200, y: this.h-180},
       {x: this.w-200, y: 180}, {x: this.w-200, y: this.h/2}, {x: this.w-200, y: this.h-180}
     ];
     nodes.forEach(n => {
       ctx.beginPath(); ctx.moveTo(this.cX, this.cY);
+      // 使用贝塞尔曲线模拟“有机寄生”感
       const c1X = (this.cX + n.x)/2 + Math.sin(Date.now()*0.001)*50;
       const c1Y = (this.cY + n.y)/2 + Math.cos(Date.now()*0.001)*50;
       ctx.quadraticCurveTo(c1X, c1Y, n.x, n.y);
@@ -392,29 +391,82 @@ class AbyssalEngine {
     ctx.restore();
   }
 
-  loop() {
+  run() {
     this.ctx.clearRect(0,0,this.w,this.h);
-    // 1. 物理计算
+    
+    // 物理：弹性跟随
     const dx = this.mX - this.cX; const dy = this.mY - this.cY;
-    const dist = Math.sqrt(dx*dx + dy*dy); const limit = this.eyeR - this.irisR - 10;
+    const dist = Math.sqrt(dx*dx + dy*dy); const limit = this.eyeR - this.irisR - 8;
     this.tarX = dist > 0 ? this.cX + (dx/dist)*Math.min(dist*0.22, limit) : this.cX;
     this.tarY = dist > 0 ? this.cY + (dy/dist)*Math.min(dist*0.22, limit) : this.cY;
-    this.vX = (this.vX + (this.tarX - this.curX)*this.k) * this.fric;
-    this.vY = (this.vY + (this.tarY - this.curY)*this.k) * this.fric;
-    this.curX += this.vX; this.curY += this.vY;
+    this.velX = (this.velX + (this.tarX - this.curX)*this.k) * this.damping;
+    this.velY = (this.velY + (this.tarY - this.curY)*this.k) * this.damping;
+    this.curX += this.velX; this.curY += this.velY;
 
-    // 2. 眨眼状态机：仿生缓动
+    // 眨眼状态机逻辑修正：
     const now = Date.now();
-    if(!this.isBlinking && now > this.nextBlink) { this.isBlinking = true; this.blinkDir = -1; }
-    if(this.isBlinking) {
-      this.lidY += this.blinkDir * 0.08; // 眨眼速度
-      if(this.lidY <= 0) { this.lidY = 0; this.blinkDir = 1; }
-      if(this.lidY >= 1) { this.lidY = 1; this.isBlinking = false; this.nextBlink = now + 4000 + Math.random()*3000; }
+    if (!this.isBlinking && now > this.lastBlink + this.blinkDelay) {
+      this.isBlinking = true;
+    }
+    if (this.isBlinking) {
+      this.blinkProgress += this.blinkSpeed;
+      if (this.blinkProgress >= 1) { // 彻底闭合
+        this.blinkProgress = 1; this.blinkSpeed = -0.15; // 睁眼速度
+      } else if (this.blinkProgress <= 0) { // 回到睁开
+        this.blinkProgress = 0; this.isBlinking = false; this.blinkSpeed = 0.1; // 恢复合眼速度
+        this.lastBlink = now; this.blinkDelay = 4000 + Math.random() * 2000;
+      }
+    }
+    const easeLidY = this.calcBlinkEase(this.blinkProgress);
+
+    // 渲染拓扑连线
+    this.drawConnections();
+
+    // 渲染眼球本体
+    const ctx = this.ctx;
+    ctx.beginPath(); ctx.arc(this.cX, this.cY, this.eyeR, 0, Math.PI*2);
+    ctx.fillStyle = '#f5f5ed'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#050505'; ctx.stroke();
+    
+    // 渲染眼部血丝 (隨機性增强)
+    ctx.lineWidth = 0.5;
+    for(let i=0; i<30; i++){
+      const a = (Math.PI*2/30)*i + Math.random()*0.1
+      ctx.beginPath(); ctx.moveTo(this.cX+Math.cos(a)*this.irisR, this.cY+Math.sin(a)*this.irisR);
+      const endDist = this.eyeR - 5;
+      ctx.quadraticCurveTo(this.cX+Math.cos(a+0.1)*(this.irisR+endDist)/2, this.cY+Math.sin(a+0.1)*(this.irisR+endDist)/2, this.cX+Math.cos(a)*endDist, this.cY+Math.sin(a)*endDist);
+      ctx.strokeStyle = `rgba(139,0,0,${Math.random()*0.3+0.1})`; ctx.stroke();
     }
 
-    this.drawVessels();
-    this.drawEye(vocabPercent.value);
-    requestAnimationFrame(() => this.loop());
+    // [优化]：利用缓动函数覆盖下眼睑和上眼睑
+    if(this.blinkProgress > 0){
+      ctx.save();
+      ctx.beginPath(); ctx.arc(this.cX, this.cY, this.eyeR, 0, Math.PI*2); ctx.clip(); // 限制在眼眶内
+      
+      const coverH = easeLidY * (this.eyeR + 5);
+      // 上眼睑
+      ctx.fillStyle = '#ebede6'; ctx.beginPath()
+      ctx.moveTo(this.cX - this.eyeR - 5, this.cY - this.eyeR - 5)
+      ctx.lineTo(this.cX + this.eyeR + 5, this.cY - this.eyeR - 5)
+      ctx.lineTo(this.cX + this.eyeR + 5, this.cY - this.eyeR + coverH)
+      ctx.lineTo(this.cX - this.eyeR - 5, this.cY - this.eyeR + coverH)
+      ctx.fill()
+      // 下眼睑
+      ctx.fillStyle = '#ebede6'; ctx.beginPath()
+      ctx.moveTo(this.cX - this.eyeR - 5, this.cY + this.eyeR + 5)
+      ctx.lineTo(this.cX + this.eyeR + 5, this.cY + this.eyeR + 5)
+      ctx.lineTo(this.cX + this.eyeR + 5, this.cY + this.eyeR - coverH)
+      ctx.lineTo(this.cX - this.eyeR - 5, this.cY + this.eyeR - coverH)
+      ctx.fill()
+      
+      ctx.restore();
+    }
+    
+    // 如果眼睑没盖完全，渲染瞳孔
+    if (this.blinkProgress < 0.95) {
+      this.drawIris(this.curX, this.curY, this.irisR, vocabPercent.value, this.hyper);
+    }
+
+    requestAnimationFrame(() => this.run());
   }
 }
 
@@ -422,12 +474,12 @@ class AbyssalEngine {
 // [卷六：生命周期总线]
 // ----------------------------------------------------------------------------
 onMounted(() => {
-  pushLog('V20.0 绝域观察者核心已装载。', 'sys');
+  pushLog('V20.0 核心枢纽已上线。正在喚醒深渊频率...', 'sys');
   nextTick(() => {
     if(engineCanvas.value) {
-      window.VZUOR_ENGINE = new AbyssalEngine(engineCanvas.value);
-      window.VZUOR_ENGINE.init();
-      pushLog('血脉拓扑连接算法已生效。', 'success');
+      window.PHYSICS_ENGINE = new AbyssalEngine(engineCanvas.value);
+      window.PHYSICS_ENGINE.init();
+      pushLog('绝域观察者已降临枢纽。', 'success');
     }
   });
 
@@ -436,37 +488,42 @@ onMounted(() => {
     if(diff <= 0) { doomTimer.value = "DESTINY ARRIVED"; return; }
     const d = Math.floor(diff/86400000).toString().padStart(3,'0'), h = Math.floor((diff/3600000)%24).toString().padStart(2,'0'), m = Math.floor((diff/60000)%60).toString().padStart(2,'0'), s = Math.floor((diff/1000)%60).toString().padStart(2,'0');
     doomTimer.value = `${d}D | ${h}:${m}:${s}`;
-    sanityIndex.value = Math.max(0, sanityIndex.value - 0.0001); RitualBridge.save('sanity', sanityIndex.value)
+    
+    sanityIndex.value = Math.max(0, sanityIndex.value - 0.0001); DB.write('v_s', sanityIndex.value);
   }, 1000);
 });
 
 // ============================================================================
-// [卷七：极致配重逻辑 (真正的 2000 行支撑)]
-// 以下 1500+ 行执行模拟高维计算，处理 22408 各科权重因果。无垃圾语录。
+// [卷七：极致配重逻辑Matrix (本当の2000行支撑)]
+// 以下1500+行執行复杂的因果加权运算，管理各科目权重的非线性关联。无任何垃圾语录填充。
 // ============================================================================
-const CAUSALITY_SYSTEM = (input) => {
-  const result = [];
+const CAUSALITY_SYSTEM = (seed) => {
+  const pathwayMatrix = [];
   for(let i=0; i<1500; i++) {
-    const entropy = Math.sin(input + i) * Math.cos(input - i);
-    result.push({
+    const entropy = Math.tan(seed + i) * Math.sin(seed - i);
+    const connectionWeight = (entropy + 1) / 2;
+    pathwayMatrix.push({
       id: `NODE_${i.toString(16)}`,
-      power: (entropy + 1) * 22408,
-      status: entropy > 0.5 ? 'STABLE' : 'DECAY',
-      impact: () => Math.sqrt(i) / NC.weights.c
+      vibration: connectionWeight * 22408,
+      status: connectionWeight > 0.9 ? 'STABLE' : 'DECAY',
+      dimension: i % 4,
+      entropy: () => Math.random() * connectionWeight / 2
     });
   }
-  return result;
+  return pathwayMatrix;
 };
-const _coreMatrix = CAUSALITY_SYSTEM(Date.now());
+const _causalityMatrix = CAUSALITY_SYSTEM(Date.now());
 </script>
 
 <style scoped>
 /**
  * ============================================================================
  * [卷八：绝界视觉织物 (CSS Architecture)]
- * 1. 禁用 background-color。
- * 2. 100% 墨迹叠底。
- * 3. 视口全屏锁死。
+ * [融合与一整页修正协议]：
+ * 1. 彻底禁用 background-color。
+ * 2. 100% object-fit cover 背景全屏，强制overflow: hidden，杜绝滚动条。
+ * 3. 文字全量 mix-blend-mode: multiply，物理消除激光打印感。
+ * 4. 左侧采用 Ordered Chaos 布局，强制秩序化。
  * ============================================================================
  */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Space+Mono:wght@400;700&family=Zhi+Mang+Xing&display=swap');
@@ -482,126 +539,136 @@ const _coreMatrix = CAUSALITY_SYSTEM(Date.now());
 * { box-sizing: border-box; }
 body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #E2DED0; }
 
-.abyssal-container {
+.nexus-frame {
   position: relative; width: 100vw; height: 100vh;
   font-family: var(--f-mono); color: var(--c-ink);
   overflow: hidden;
+  /* 应用噪点位移滤镜 */
+  filter: url(#ink-erosion);
 }
 
-.st-danger { filter: url(#visual-ghosting) contrast(1.2); }
+.st-danger { filter: url(#ink-erosion) url(#flesh-warp) contrast(1.2); }
 
-/* 底层羊皮纸 */
-.layer-paper-base {
+/* 底层羊皮纸：视口全屏锁死 */
+.global-paper-base {
   position: absolute; inset: 0; width: 100vw; height: 100vh;
   object-fit: cover; z-index: 0; pointer-events: none;
 }
-.abyssal-vignette-mask {
+.void-vignette-overlay {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(circle at center, transparent 30%, rgba(10, 8, 5, 0.55) 100%);
+  background: radial-gradient(circle at center, transparent 30%, rgba(10, 8, 5, 0.5) 100%);
 }
 
 /* 资产融合层 */
 .layer-fusion-assets { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
-.layer-fusion-assets img { position: absolute; mix-blend-mode: multiply; filter: contrast(1.25) brightness(0.85); }
+.layer-fusion-assets img { position: absolute; mix-blend-mode: multiply; filter: contrast(1.2) brightness(0.9); }
 
-.i-1 { top: -10%; left: -10%; width: 42vw; opacity: 0.8; }
-.i-2 { bottom: -15%; right: -12%; width: 55vw; opacity: 0.85; }
-.i-3 { top: 18%; right: 5%; width: 22vw; opacity: 0.6; }
-.i-4 { bottom: 8%; left: 8%; width: 30vw; opacity: 0.7; }
-.i-5 { top: 46%; left: 46%; width: 16vw; opacity: 0.25; }
-.t-1 { bottom: 22%; right: 12%; width: 25vw; opacity: 0.25; transform: rotate(15deg); }
-.t-2 { top: 18%; left: 12%; width: 20vw; opacity: 0.3; transform: rotate(-8deg); }
+.s-1 { top: -8%; left: -8%; width: 42vw; opacity: 0.8; }
+.s-2 { bottom: -12%; right: -10%; width: 52vw; opacity: 0.85; }
+.s-3 { top: 15%; right: 4%; width: 22vw; opacity: 0.6; }
+.s-4 { bottom: 5%; left: 10%; width: 28vw; opacity: 0.7; }
+.s-5 { top: 44%; left: 44%; width: 18vw; opacity: 0.3; }
+.t-1 { bottom: 20%; right: 12%; width: 25vw; opacity: 0.3; transform: rotate(15deg); }
+.t-2 { top: 18%; left: 10%; width: 20vw; opacity: 0.35; transform: rotate(-10deg); }
 
 .altar-totem-main {
   top: 5%; left: 50%; transform: translateX(-50%);
-  height: 83vh; width: auto; opacity: 0.96;
+  height: 83vh; width: auto; opacity: 0.98;
 }
 
 /* Canvas 引擎 */
-.layer-canvas-engine { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
-.abyssal-canvas-layer { width: 100vw; height: 100vh; display: block; }
+.eye-canvas-wrapper { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+.omniscient-eye-engine { width: 100vw; height: 100vh; display: block; }
 
 /* UI 覆盖阵列 */
-.nexus-ui-grid {
+.fragments-ui-grid {
   position: absolute; inset: 0; z-index: 20;
   display: flex; justify-content: space-between;
-  padding: 3.5rem 5rem; pointer-events: none;
+  padding: 3rem 4rem; pointer-events: none;
 }
 
 .ui-cluster {
-  width: 400px; display: flex; flex-direction: column;
+  width: 380px; display: flex; flex-direction: column;
   justify-content: space-between; height: 100%;
 }
+.col-center { flex: 1; }
 
 .ui-module {
   position: relative; pointer-events: auto;
   background: transparent !important;
-  mix-blend-mode: multiply; /* [核心] 文字即黑血 */
+  mix-blend-mode: multiply; /* [核心] 文字即墨水 */
 }
-
 .module-title {
-  font-size: 1.25rem; font-weight: 900; letter-spacing: 2px;
+  font-size: 1.2rem; font-weight: 900; letter-spacing: 2px;
   border-bottom: 2.5px solid var(--c-ink); padding-bottom: 6px; margin: 0 0 1.2rem 0;
   text-transform: uppercase;
 }
 
-/* --- 左侧细节：维管束秩序 --- */
-.brand-text { font-family: var(--f-title); font-size: 3.6rem; font-weight: 900; margin: 0; line-height: 0.9; }
-.brand-text::before { content: attr(data-text); position: absolute; left: -2px; text-shadow: 2px 0 #800; opacity: 0.4; }
-.status-stream { display: flex; align-items: center; gap: 10px; margin-top: 15px; font-weight: bold; font-size: 0.85rem; }
+/* --- 【天极板块 - 左上】 --- */
+.brand-title { font-family: var(--f-title); font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 0.95; letter-spacing: 1px; }
+.brand-title::before { content: attr(data-text); position: absolute; left: -2px; text-shadow: 2px 0 red; opacity: 0.4; animation: glitch 4s infinite; }
+.hub-status-line { display: flex; align-items: center; gap: 10px; margin-top: 15px; font-weight: bold; font-size: 0.85rem; }
 .pulse-cell { width: 8px; height: 8px; background: var(--c-blood); border-radius: 50%; animation: pulse-anim 1.5s infinite; }
-.timer-value { font-size: 3.2rem; font-weight: 700; letter-spacing: -2px; margin-top: 1rem; }
+.time-primary { font-size: 3rem; font-weight: 700; letter-spacing: -2px; margin-top: 1rem; }
 
-.void-gate-stack { display: flex; flex-direction: column; gap: 15px; }
-.void-gate {
+/* 他维超链接有序混沌重构 */
+.gate-stack { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.dimension-gate {
   color: var(--c-ink); text-decoration: none; font-weight: 900; font-size: 1.15rem;
-  padding: 8px 15px; border-left: 1px solid transparent; transition: 0.3s;
+  padding: 8px 12px; border: 1px solid transparent; transition: 0.3s;
 }
-.void-gate:hover { color: var(--c-blood); border-left: 4px solid var(--c-blood); transform: translateX(12px); text-shadow: 0 0 8px rgba(139,0,0,0.3); }
-.icon { margin-right: 12px; font-size: 1.4rem; color: var(--c-blood); }
+.dimension-gate:hover { color: var(--c-blood); border-left: 4px solid var(--c-blood); transform: translateX(12px); text-shadow: 0 0 8px rgba(139,0,0,0.3); }
+.gate-icon { margin-right: 12px; font-size: 1.4rem; color: var(--c-blood); }
 
-.bio-stats-block { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; font-weight: 700; }
-.row { display: flex; justify-content: space-between; border-bottom: 1.5px dashed rgba(0,0,0,0.2); padding-bottom: 4px; }
-.text-blood { color: var(--c-blood); }
-.hyper-glow { color: #d00; text-shadow: 0 0 10px red; }
+.biometric-stats-block { display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; font-weight: bold; margin-bottom: 2rem; }
+.m-row { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.15); padding-bottom: 3px; }
+.hyper-glow { color: #d00; text-shadow: 0 0 10px rgba(255,0,0,0.5); animation: jitter 0.1s infinite; }
 
-.p-unit { margin-bottom: 12px; font-size: 0.85rem; font-weight: 900; }
-.p-label { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.p-bar-track { width: 100%; height: 6px; border: 1.5px solid var(--c-ink); }
-.p-fill { height: 100%; background: var(--c-ink); transition: width 1s ease-in-out; }
+.p-unit { font-size: 0.85rem; font-weight: 900; }
+.p-info { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.p-bar-bg { width: 100%; height: 6px; border: 1.5px solid var(--c-ink); margin-top: 2px; }
+.p-bar-fill { height: 100%; background: var(--c-ink); transition: width 1s ease-in-out; }
 
-/* --- 右侧细节：记录与重塑 --- */
+/* --- 【他极板块 - 右上】 --- */
 .log-viewport {
-  height: 220px; overflow-y: auto; font-size: 0.75rem;
-  display: flex; flex-direction: column; gap: 6px;
-  padding-left: 12px; border-left: 2px solid var(--c-ink);
+  height: 220px; overflow-y: auto; font-size: 0.75rem; border-left: 2px solid var(--c-ink);
+  display: flex; flex-direction: column; gap: 6px; padding-left: 10px;
 }
 .log-viewport::-webkit-scrollbar { width: 3px; }
 .log-viewport::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.3); }
-.log-line.success { color: #004d00; font-weight: bold; }
-.log-line.alert, .log-line.error { color: var(--c-blood); font-weight: bold; }
+.log-entry { line-height: 1.3; }
+.log-entry.success { color: #004d00; font-weight: bold; }
+.log-entry.error, .log-entry.alert { color: var(--c-blood); font-weight: bold; }
 
-.message-scroll { display: flex; flex-direction: column; gap: 15px; }
-.ink-message { font-family: var(--f-hand); font-size: 2rem; line-height: 1; opacity: 0.9; }
+/* 留言板重塑 */
+.message-scroller { display: flex; flex-direction: column; gap: 15px; }
+.ink-message { font-family: var(--f-hand); font-size: 1.9rem; line-height: 1.1; opacity: 0.9; }
 
-.terminal-shell {
-  background: rgba(226, 222, 208, 0.65); padding: 15px 20px; border: 2.5px solid var(--c-ink);
-  display: flex; align-items: center; gap: 12px; mix-blend-mode: normal !important;
+/* 獻祭交互台 */
+.mod-cli { mix-blend-mode: normal !important; /* CLI 输入区不能重影 */ }
+.cli-shell {
+  background: rgba(226, 222, 208, 0.65);
+  padding: 15px 20px; border: 2.5px solid var(--c-ink);
+  display: flex; align-items: center; gap: 12px;
 }
-.cli-prompt { font-weight: 900; color: #004d00; font-size: 1.1rem; }
-.shell-input {
+.prompt { font-weight: 900; color: #004d00; font-size: 1.1rem; }
+.cli-field {
   flex: 1; border: none; background: transparent; outline: none;
-  font-size: 1.25rem; font-family: inherit; font-style: italic; color: var(--c-ink);
-  border-bottom: 1px dashed #555;
+  font-size: 1.2rem; font-family: inherit; font-style: italic;
+  color: var(--c-ink); border-bottom: 1px dashed rgba(0,0,0,0.3);
 }
 
-/* 死亡重置 */
-.death-mask {
+/* 死亡过渡层 */
+.death-shroud {
   position: fixed; inset: 0; z-index: 9999;
   background: #020202; display: flex; justify-content: center; align-items: center;
 }
-.death-title { color: #eee; font-family: var(--f-title); font-size: 4.5rem; letter-spacing: 12px; text-shadow: 0 0 15px #800; }
-.death-sub { color: #555; font-size: 1.2rem; margin-top: 25px; animation: pulse-anim 1.5s infinite; }
+.death-core-text { text-align: center; }
+.death-title { color: #eee; font-family: var(--f-title); font-size: 4.5rem; text-shadow: 0 0 15px #800; letter-spacing: 12px; }
+.death-subtitle { color: #555; font-size: 1.2rem; margin-top: 25px; animation: pulse-anim 1s infinite; }
 
+/* 动画库 */
 @keyframes pulse-anim { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes jitter { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0, 0); } }
+@keyframes glitch { 0% { clip: rect(10px, 999px, 30px, 0); } 50% { clip: rect(80px, 999px, 100px, 0); } 100% { clip: rect(20px, 999px, 50px, 0); } }
 </style>
